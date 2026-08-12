@@ -30,6 +30,7 @@ export const studentNav: NavItem[] = [
   { to: "/noticeboard", label: "Noticeboard", icon: Megaphone },
   { to: "/homework", label: "Homework", icon: BookOpen },
   { to: "/attendance", label: "Attendance", icon: CalendarCheck },
+  { to: "/timetable", label: "Timetable", icon: Clock },
   { to: "/calendar", label: "Calendar", icon: Calendar },
   { to: "/academics", label: "Academics", icon: GraduationCap },
   { to: "/report-cards", label: "Report Cards", icon: FileText },
@@ -62,6 +63,7 @@ export const teacherNav: NavItem[] = [
   { to: "/teacher-portal/regularization", label: "Regularization", icon: ClipboardCheck },
   { to: "/teacher-portal/students", label: "Students", icon: Users },
   { to: "/teacher-portal/notices", label: "Notices", icon: Megaphone },
+  { to: "/teacher-portal/timetable", label: "Timetable", icon: Clock },
   { to: "/teacher-portal/calendar", label: "Calendar", icon: Calendar },
   { to: "/teacher-portal/profile", label: "Profile", icon: User },
 ];
@@ -85,6 +87,7 @@ export const staffNav: NavItem[] = [
   { to: "/staff-portal/regularization", label: "Regularization", icon: ClipboardCheck },
   { to: "/staff-portal/homework", label: "Homework", icon: BookOpen },
   { to: "/staff-portal/notices", label: "Notices", icon: Megaphone },
+  { to: "/staff-portal/timetable", label: "Timetable", icon: Clock },
   { to: "/staff-portal/profile", label: "Profile", icon: User },
 ];
 

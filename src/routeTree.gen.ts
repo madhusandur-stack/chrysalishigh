@@ -18,6 +18,7 @@ import { Route as PortalRouteImport } from './routes/_portal'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TeacherPortalIndexRouteImport } from './routes/teacher-portal.index'
 import { Route as StaffPortalIndexRouteImport } from './routes/staff-portal.index'
+import { Route as TeacherPortalTimetableRouteImport } from './routes/teacher-portal.timetable'
 import { Route as TeacherPortalStudentsRouteImport } from './routes/teacher-portal.students'
 import { Route as TeacherPortalRegularizationRouteImport } from './routes/teacher-portal.regularization'
 import { Route as TeacherPortalPupaRouteImport } from './routes/teacher-portal.pupa'
@@ -29,6 +30,7 @@ import { Route as TeacherPortalHomeworkRouteImport } from './routes/teacher-port
 import { Route as TeacherPortalClassesRouteImport } from './routes/teacher-portal.classes'
 import { Route as TeacherPortalCalendarRouteImport } from './routes/teacher-portal.calendar'
 import { Route as TeacherPortalAttendanceRouteImport } from './routes/teacher-portal.attendance'
+import { Route as StaffPortalTimetableRouteImport } from './routes/staff-portal.timetable'
 import { Route as StaffPortalTeachersRouteImport } from './routes/staff-portal.teachers'
 import { Route as StaffPortalTeacherAttendanceRouteImport } from './routes/staff-portal.teacher-attendance'
 import { Route as StaffPortalStudentsRouteImport } from './routes/staff-portal.students'
@@ -38,6 +40,7 @@ import { Route as StaffPortalNoticesRouteImport } from './routes/staff-portal.no
 import { Route as StaffPortalHomeworkRouteImport } from './routes/staff-portal.homework'
 import { Route as StaffPortalClassesRouteImport } from './routes/staff-portal.classes'
 import { Route as StaffPortalAttendanceRouteImport } from './routes/staff-portal.attendance'
+import { Route as PortalTimetableRouteImport } from './routes/_portal.timetable'
 import { Route as PortalSettingsRouteImport } from './routes/_portal.settings'
 import { Route as PortalReportCardsRouteImport } from './routes/_portal.report-cards'
 import { Route as PortalProfileRouteImport } from './routes/_portal.profile'
@@ -98,6 +101,11 @@ const StaffPortalIndexRoute = StaffPortalIndexRouteImport.update({
   path: '/',
   getParentRoute: () => StaffPortalRoute,
 } as any)
+const TeacherPortalTimetableRoute = TeacherPortalTimetableRouteImport.update({
+  id: '/timetable',
+  path: '/timetable',
+  getParentRoute: () => TeacherPortalRoute,
+} as any)
 const TeacherPortalStudentsRoute = TeacherPortalStudentsRouteImport.update({
   id: '/students',
   path: '/students',
@@ -155,6 +163,11 @@ const TeacherPortalAttendanceRoute = TeacherPortalAttendanceRouteImport.update({
   path: '/attendance',
   getParentRoute: () => TeacherPortalRoute,
 } as any)
+const StaffPortalTimetableRoute = StaffPortalTimetableRouteImport.update({
+  id: '/timetable',
+  path: '/timetable',
+  getParentRoute: () => StaffPortalRoute,
+} as any)
 const StaffPortalTeachersRoute = StaffPortalTeachersRouteImport.update({
   id: '/teachers',
   path: '/teachers',
@@ -201,6 +214,11 @@ const StaffPortalAttendanceRoute = StaffPortalAttendanceRouteImport.update({
   id: '/attendance',
   path: '/attendance',
   getParentRoute: () => StaffPortalRoute,
+} as any)
+const PortalTimetableRoute = PortalTimetableRouteImport.update({
+  id: '/timetable',
+  path: '/timetable',
+  getParentRoute: () => PortalRoute,
 } as any)
 const PortalSettingsRoute = PortalSettingsRouteImport.update({
   id: '/settings',
@@ -300,6 +318,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof PortalProfileRoute
   '/report-cards': typeof PortalReportCardsRoute
   '/settings': typeof PortalSettingsRoute
+  '/timetable': typeof PortalTimetableRoute
   '/staff-portal/attendance': typeof StaffPortalAttendanceRoute
   '/staff-portal/classes': typeof StaffPortalClassesRoute
   '/staff-portal/homework': typeof StaffPortalHomeworkRoute
@@ -309,6 +328,7 @@ export interface FileRoutesByFullPath {
   '/staff-portal/students': typeof StaffPortalStudentsRoute
   '/staff-portal/teacher-attendance': typeof StaffPortalTeacherAttendanceRoute
   '/staff-portal/teachers': typeof StaffPortalTeachersRoute
+  '/staff-portal/timetable': typeof StaffPortalTimetableRoute
   '/teacher-portal/attendance': typeof TeacherPortalAttendanceRoute
   '/teacher-portal/calendar': typeof TeacherPortalCalendarRoute
   '/teacher-portal/classes': typeof TeacherPortalClassesRoute
@@ -320,6 +340,7 @@ export interface FileRoutesByFullPath {
   '/teacher-portal/pupa': typeof TeacherPortalPupaRoute
   '/teacher-portal/regularization': typeof TeacherPortalRegularizationRoute
   '/teacher-portal/students': typeof TeacherPortalStudentsRoute
+  '/teacher-portal/timetable': typeof TeacherPortalTimetableRoute
   '/staff-portal/': typeof StaffPortalIndexRoute
   '/teacher-portal/': typeof TeacherPortalIndexRoute
 }
@@ -343,6 +364,7 @@ export interface FileRoutesByTo {
   '/profile': typeof PortalProfileRoute
   '/report-cards': typeof PortalReportCardsRoute
   '/settings': typeof PortalSettingsRoute
+  '/timetable': typeof PortalTimetableRoute
   '/staff-portal/attendance': typeof StaffPortalAttendanceRoute
   '/staff-portal/classes': typeof StaffPortalClassesRoute
   '/staff-portal/homework': typeof StaffPortalHomeworkRoute
@@ -352,6 +374,7 @@ export interface FileRoutesByTo {
   '/staff-portal/students': typeof StaffPortalStudentsRoute
   '/staff-portal/teacher-attendance': typeof StaffPortalTeacherAttendanceRoute
   '/staff-portal/teachers': typeof StaffPortalTeachersRoute
+  '/staff-portal/timetable': typeof StaffPortalTimetableRoute
   '/teacher-portal/attendance': typeof TeacherPortalAttendanceRoute
   '/teacher-portal/calendar': typeof TeacherPortalCalendarRoute
   '/teacher-portal/classes': typeof TeacherPortalClassesRoute
@@ -363,6 +386,7 @@ export interface FileRoutesByTo {
   '/teacher-portal/pupa': typeof TeacherPortalPupaRoute
   '/teacher-portal/regularization': typeof TeacherPortalRegularizationRoute
   '/teacher-portal/students': typeof TeacherPortalStudentsRoute
+  '/teacher-portal/timetable': typeof TeacherPortalTimetableRoute
   '/staff-portal': typeof StaffPortalIndexRoute
   '/teacher-portal': typeof TeacherPortalIndexRoute
 }
@@ -390,6 +414,7 @@ export interface FileRoutesById {
   '/_portal/profile': typeof PortalProfileRoute
   '/_portal/report-cards': typeof PortalReportCardsRoute
   '/_portal/settings': typeof PortalSettingsRoute
+  '/_portal/timetable': typeof PortalTimetableRoute
   '/staff-portal/attendance': typeof StaffPortalAttendanceRoute
   '/staff-portal/classes': typeof StaffPortalClassesRoute
   '/staff-portal/homework': typeof StaffPortalHomeworkRoute
@@ -399,6 +424,7 @@ export interface FileRoutesById {
   '/staff-portal/students': typeof StaffPortalStudentsRoute
   '/staff-portal/teacher-attendance': typeof StaffPortalTeacherAttendanceRoute
   '/staff-portal/teachers': typeof StaffPortalTeachersRoute
+  '/staff-portal/timetable': typeof StaffPortalTimetableRoute
   '/teacher-portal/attendance': typeof TeacherPortalAttendanceRoute
   '/teacher-portal/calendar': typeof TeacherPortalCalendarRoute
   '/teacher-portal/classes': typeof TeacherPortalClassesRoute
@@ -410,6 +436,7 @@ export interface FileRoutesById {
   '/teacher-portal/pupa': typeof TeacherPortalPupaRoute
   '/teacher-portal/regularization': typeof TeacherPortalRegularizationRoute
   '/teacher-portal/students': typeof TeacherPortalStudentsRoute
+  '/teacher-portal/timetable': typeof TeacherPortalTimetableRoute
   '/staff-portal/': typeof StaffPortalIndexRoute
   '/teacher-portal/': typeof TeacherPortalIndexRoute
 }
@@ -437,6 +464,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/report-cards'
     | '/settings'
+    | '/timetable'
     | '/staff-portal/attendance'
     | '/staff-portal/classes'
     | '/staff-portal/homework'
@@ -446,6 +474,7 @@ export interface FileRouteTypes {
     | '/staff-portal/students'
     | '/staff-portal/teacher-attendance'
     | '/staff-portal/teachers'
+    | '/staff-portal/timetable'
     | '/teacher-portal/attendance'
     | '/teacher-portal/calendar'
     | '/teacher-portal/classes'
@@ -457,6 +486,7 @@ export interface FileRouteTypes {
     | '/teacher-portal/pupa'
     | '/teacher-portal/regularization'
     | '/teacher-portal/students'
+    | '/teacher-portal/timetable'
     | '/staff-portal/'
     | '/teacher-portal/'
   fileRoutesByTo: FileRoutesByTo
@@ -480,6 +510,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/report-cards'
     | '/settings'
+    | '/timetable'
     | '/staff-portal/attendance'
     | '/staff-portal/classes'
     | '/staff-portal/homework'
@@ -489,6 +520,7 @@ export interface FileRouteTypes {
     | '/staff-portal/students'
     | '/staff-portal/teacher-attendance'
     | '/staff-portal/teachers'
+    | '/staff-portal/timetable'
     | '/teacher-portal/attendance'
     | '/teacher-portal/calendar'
     | '/teacher-portal/classes'
@@ -500,6 +532,7 @@ export interface FileRouteTypes {
     | '/teacher-portal/pupa'
     | '/teacher-portal/regularization'
     | '/teacher-portal/students'
+    | '/teacher-portal/timetable'
     | '/staff-portal'
     | '/teacher-portal'
   id:
@@ -526,6 +559,7 @@ export interface FileRouteTypes {
     | '/_portal/profile'
     | '/_portal/report-cards'
     | '/_portal/settings'
+    | '/_portal/timetable'
     | '/staff-portal/attendance'
     | '/staff-portal/classes'
     | '/staff-portal/homework'
@@ -535,6 +569,7 @@ export interface FileRouteTypes {
     | '/staff-portal/students'
     | '/staff-portal/teacher-attendance'
     | '/staff-portal/teachers'
+    | '/staff-portal/timetable'
     | '/teacher-portal/attendance'
     | '/teacher-portal/calendar'
     | '/teacher-portal/classes'
@@ -546,6 +581,7 @@ export interface FileRouteTypes {
     | '/teacher-portal/pupa'
     | '/teacher-portal/regularization'
     | '/teacher-portal/students'
+    | '/teacher-portal/timetable'
     | '/staff-portal/'
     | '/teacher-portal/'
   fileRoutesById: FileRoutesById
@@ -625,6 +661,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StaffPortalIndexRouteImport
       parentRoute: typeof StaffPortalRoute
     }
+    '/teacher-portal/timetable': {
+      id: '/teacher-portal/timetable'
+      path: '/timetable'
+      fullPath: '/teacher-portal/timetable'
+      preLoaderRoute: typeof TeacherPortalTimetableRouteImport
+      parentRoute: typeof TeacherPortalRoute
+    }
     '/teacher-portal/students': {
       id: '/teacher-portal/students'
       path: '/students'
@@ -702,6 +745,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeacherPortalAttendanceRouteImport
       parentRoute: typeof TeacherPortalRoute
     }
+    '/staff-portal/timetable': {
+      id: '/staff-portal/timetable'
+      path: '/timetable'
+      fullPath: '/staff-portal/timetable'
+      preLoaderRoute: typeof StaffPortalTimetableRouteImport
+      parentRoute: typeof StaffPortalRoute
+    }
     '/staff-portal/teachers': {
       id: '/staff-portal/teachers'
       path: '/teachers'
@@ -764,6 +814,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/staff-portal/attendance'
       preLoaderRoute: typeof StaffPortalAttendanceRouteImport
       parentRoute: typeof StaffPortalRoute
+    }
+    '/_portal/timetable': {
+      id: '/_portal/timetable'
+      path: '/timetable'
+      fullPath: '/timetable'
+      preLoaderRoute: typeof PortalTimetableRouteImport
+      parentRoute: typeof PortalRoute
     }
     '/_portal/settings': {
       id: '/_portal/settings'
@@ -889,6 +946,7 @@ interface PortalRouteChildren {
   PortalProfileRoute: typeof PortalProfileRoute
   PortalReportCardsRoute: typeof PortalReportCardsRoute
   PortalSettingsRoute: typeof PortalSettingsRoute
+  PortalTimetableRoute: typeof PortalTimetableRoute
 }
 
 const PortalRouteChildren: PortalRouteChildren = {
@@ -907,6 +965,7 @@ const PortalRouteChildren: PortalRouteChildren = {
   PortalProfileRoute: PortalProfileRoute,
   PortalReportCardsRoute: PortalReportCardsRoute,
   PortalSettingsRoute: PortalSettingsRoute,
+  PortalTimetableRoute: PortalTimetableRoute,
 }
 
 const PortalRouteWithChildren =
@@ -922,6 +981,7 @@ interface StaffPortalRouteChildren {
   StaffPortalStudentsRoute: typeof StaffPortalStudentsRoute
   StaffPortalTeacherAttendanceRoute: typeof StaffPortalTeacherAttendanceRoute
   StaffPortalTeachersRoute: typeof StaffPortalTeachersRoute
+  StaffPortalTimetableRoute: typeof StaffPortalTimetableRoute
   StaffPortalIndexRoute: typeof StaffPortalIndexRoute
 }
 
@@ -935,6 +995,7 @@ const StaffPortalRouteChildren: StaffPortalRouteChildren = {
   StaffPortalStudentsRoute: StaffPortalStudentsRoute,
   StaffPortalTeacherAttendanceRoute: StaffPortalTeacherAttendanceRoute,
   StaffPortalTeachersRoute: StaffPortalTeachersRoute,
+  StaffPortalTimetableRoute: StaffPortalTimetableRoute,
   StaffPortalIndexRoute: StaffPortalIndexRoute,
 }
 
@@ -954,6 +1015,7 @@ interface TeacherPortalRouteChildren {
   TeacherPortalPupaRoute: typeof TeacherPortalPupaRoute
   TeacherPortalRegularizationRoute: typeof TeacherPortalRegularizationRoute
   TeacherPortalStudentsRoute: typeof TeacherPortalStudentsRoute
+  TeacherPortalTimetableRoute: typeof TeacherPortalTimetableRoute
   TeacherPortalIndexRoute: typeof TeacherPortalIndexRoute
 }
 
@@ -969,6 +1031,7 @@ const TeacherPortalRouteChildren: TeacherPortalRouteChildren = {
   TeacherPortalPupaRoute: TeacherPortalPupaRoute,
   TeacherPortalRegularizationRoute: TeacherPortalRegularizationRoute,
   TeacherPortalStudentsRoute: TeacherPortalStudentsRoute,
+  TeacherPortalTimetableRoute: TeacherPortalTimetableRoute,
   TeacherPortalIndexRoute: TeacherPortalIndexRoute,
 }
 
