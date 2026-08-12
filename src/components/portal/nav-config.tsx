@@ -19,6 +19,7 @@ import {
   BarChart3,
   Clock,
   ClipboardCheck,
+  NotebookPen,
   type LucideIcon,
 } from "lucide-react";
 
@@ -32,6 +33,7 @@ export const studentNav: NavItem[] = [
   { to: "/calendar", label: "Calendar", icon: Calendar },
   { to: "/academics", label: "Academics", icon: GraduationCap },
   { to: "/report-cards", label: "Report Cards", icon: FileText },
+  { to: "/diary", label: "Diary", icon: NotebookPen },
   { to: "/fees", label: "Fee Details", icon: Wallet },
   { to: "/documents", label: "Documents", icon: FolderOpen },
   { to: "/gallery", label: "Gallery", icon: Images },
@@ -45,7 +47,7 @@ export const dockNav: NavItem[] = [
   { to: "/dashboard", label: "Home", icon: LayoutDashboard },
   { to: "/homework", label: "Homework", icon: BookOpen },
   { to: "/attendance", label: "Attend", icon: CalendarCheck },
-  { to: "/calendar", label: "Calendar", icon: Calendar },
+  { to: "/diary", label: "Diary", icon: NotebookPen },
   { to: "/profile", label: "Profile", icon: User },
 ];
 

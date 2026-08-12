@@ -46,6 +46,7 @@ import { Route as PortalHomeworkRouteImport } from './routes/_portal.homework'
 import { Route as PortalGalleryRouteImport } from './routes/_portal.gallery'
 import { Route as PortalFeesRouteImport } from './routes/_portal.fees'
 import { Route as PortalDocumentsRouteImport } from './routes/_portal.documents'
+import { Route as PortalDiaryRouteImport } from './routes/_portal.diary'
 import { Route as PortalDashboardRouteImport } from './routes/_portal.dashboard'
 import { Route as PortalCalendarRouteImport } from './routes/_portal.calendar'
 import { Route as PortalCafeteriaRouteImport } from './routes/_portal.cafeteria'
@@ -241,6 +242,11 @@ const PortalDocumentsRoute = PortalDocumentsRouteImport.update({
   path: '/documents',
   getParentRoute: () => PortalRoute,
 } as any)
+const PortalDiaryRoute = PortalDiaryRouteImport.update({
+  id: '/diary',
+  path: '/diary',
+  getParentRoute: () => PortalRoute,
+} as any)
 const PortalDashboardRoute = PortalDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -285,6 +291,7 @@ export interface FileRoutesByFullPath {
   '/cafeteria': typeof PortalCafeteriaRoute
   '/calendar': typeof PortalCalendarRoute
   '/dashboard': typeof PortalDashboardRoute
+  '/diary': typeof PortalDiaryRoute
   '/documents': typeof PortalDocumentsRoute
   '/fees': typeof PortalFeesRoute
   '/gallery': typeof PortalGalleryRoute
@@ -327,6 +334,7 @@ export interface FileRoutesByTo {
   '/cafeteria': typeof PortalCafeteriaRoute
   '/calendar': typeof PortalCalendarRoute
   '/dashboard': typeof PortalDashboardRoute
+  '/diary': typeof PortalDiaryRoute
   '/documents': typeof PortalDocumentsRoute
   '/fees': typeof PortalFeesRoute
   '/gallery': typeof PortalGalleryRoute
@@ -373,6 +381,7 @@ export interface FileRoutesById {
   '/_portal/cafeteria': typeof PortalCafeteriaRoute
   '/_portal/calendar': typeof PortalCalendarRoute
   '/_portal/dashboard': typeof PortalDashboardRoute
+  '/_portal/diary': typeof PortalDiaryRoute
   '/_portal/documents': typeof PortalDocumentsRoute
   '/_portal/fees': typeof PortalFeesRoute
   '/_portal/gallery': typeof PortalGalleryRoute
@@ -419,6 +428,7 @@ export interface FileRouteTypes {
     | '/cafeteria'
     | '/calendar'
     | '/dashboard'
+    | '/diary'
     | '/documents'
     | '/fees'
     | '/gallery'
@@ -461,6 +471,7 @@ export interface FileRouteTypes {
     | '/cafeteria'
     | '/calendar'
     | '/dashboard'
+    | '/diary'
     | '/documents'
     | '/fees'
     | '/gallery'
@@ -506,6 +517,7 @@ export interface FileRouteTypes {
     | '/_portal/cafeteria'
     | '/_portal/calendar'
     | '/_portal/dashboard'
+    | '/_portal/diary'
     | '/_portal/documents'
     | '/_portal/fees'
     | '/_portal/gallery'
@@ -809,6 +821,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortalDocumentsRouteImport
       parentRoute: typeof PortalRoute
     }
+    '/_portal/diary': {
+      id: '/_portal/diary'
+      path: '/diary'
+      fullPath: '/diary'
+      preLoaderRoute: typeof PortalDiaryRouteImport
+      parentRoute: typeof PortalRoute
+    }
     '/_portal/dashboard': {
       id: '/_portal/dashboard'
       path: '/dashboard'
@@ -861,6 +880,7 @@ interface PortalRouteChildren {
   PortalCafeteriaRoute: typeof PortalCafeteriaRoute
   PortalCalendarRoute: typeof PortalCalendarRoute
   PortalDashboardRoute: typeof PortalDashboardRoute
+  PortalDiaryRoute: typeof PortalDiaryRoute
   PortalDocumentsRoute: typeof PortalDocumentsRoute
   PortalFeesRoute: typeof PortalFeesRoute
   PortalGalleryRoute: typeof PortalGalleryRoute
@@ -878,6 +898,7 @@ const PortalRouteChildren: PortalRouteChildren = {
   PortalCafeteriaRoute: PortalCafeteriaRoute,
   PortalCalendarRoute: PortalCalendarRoute,
   PortalDashboardRoute: PortalDashboardRoute,
+  PortalDiaryRoute: PortalDiaryRoute,
   PortalDocumentsRoute: PortalDocumentsRoute,
   PortalFeesRoute: PortalFeesRoute,
   PortalGalleryRoute: PortalGalleryRoute,
