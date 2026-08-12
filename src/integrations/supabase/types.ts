@@ -603,6 +603,42 @@ export type Database = {
           },
         ]
       }
+      notice_reads: {
+        Row: {
+          id: string
+          notice_id: string
+          read_at: string
+          student_id: string
+        }
+        Insert: {
+          id?: string
+          notice_id: string
+          read_at?: string
+          student_id: string
+        }
+        Update: {
+          id?: string
+          notice_id?: string
+          read_at?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notice_reads_notice_id_fkey"
+            columns: ["notice_id"]
+            isOneToOne: false
+            referencedRelation: "notice_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notice_reads_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notices: {
         Row: {
           audience: string
@@ -1121,6 +1157,59 @@ export type Database = {
             columns: ["staff_id"]
             isOneToOne: false
             referencedRelation: "staff_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      timetables: {
+        Row: {
+          academic_year: string
+          class_id: string
+          created_at: string
+          draft_slots: Json
+          id: string
+          published_at: string | null
+          published_by_name: string | null
+          published_slots: Json
+          status: string
+          updated_at: string
+          updated_by: string | null
+          updated_by_name: string | null
+        }
+        Insert: {
+          academic_year: string
+          class_id: string
+          created_at?: string
+          draft_slots?: Json
+          id?: string
+          published_at?: string | null
+          published_by_name?: string | null
+          published_slots?: Json
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+          updated_by_name?: string | null
+        }
+        Update: {
+          academic_year?: string
+          class_id?: string
+          created_at?: string
+          draft_slots?: Json
+          id?: string
+          published_at?: string | null
+          published_by_name?: string | null
+          published_slots?: Json
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+          updated_by_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timetables_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
             referencedColumns: ["id"]
           },
         ]
