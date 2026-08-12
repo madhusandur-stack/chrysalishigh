@@ -35,6 +35,9 @@ export const qk = {
   teacherAttendance: (id?: string) => ["school", "teacher-attendance", id ?? "all"] as const,
   regularization: ["school", "regularization"] as const,
   notices: ["school", "notices"] as const,
+  noticeReads: (id?: string) => ["school", "notice-reads", id ?? "all"] as const,
+  timetable: (classId?: string, year?: string) =>
+    ["school", "timetable", classId ?? "all", year ?? "current"] as const,
   cce: (id?: string) => ["school", "cce", id ?? "all"] as const,
   pupa: (id?: string) => ["school", "pupa", id ?? "all"] as const,
   reportCards: (id?: string) => ["school", "report-cards", id ?? "all"] as const,
@@ -653,4 +656,147 @@ export async function setHomeworkStatus(input: {
       { onConflict: "homework_id,student_id" },
     ),
   );
+}
+
+/* ------------------------------ notice reads ------------------------------ */
+
+export type NoticeRead = { notice_id: string; student_id: string; read_at: string };
+
+/** Which notices a student has already opened (drives the unread dot). */
+export async function listNoticeReads(studentId: string) {
+  return unwrap(
+    await supabase
+      .from("notice_reads")
+      .select("notice_id, student_id, read_at")
+      .eq("student_id", studentId),
+  ) as NoticeRead[];
+}
+
+export async function markNoticeRead(noticeId: string, studentId: string) {
+  unwrap(
+    await supabase
+      .from("notice_reads")
+      .upsert({ notice_id: noticeId, student_id: studentId } as never, {
+        onConflict: "notice_id,student_id",
+      }),
+  );
+}
+
+export async function markAllNoticesRead(noticeIds: string[], studentId: string) {
+  if (!noticeIds.length) return;
+  unwrap(
+    await supabase.from("notice_reads").upsert(
+      noticeIds.map((notice_id) => ({ notice_id, student_id: studentId })) as never,
+      { onConflict: "notice_id,student_id" },
+    ),
+  );
+}
+
+/* -------------------------------- timetable -------------------------------- */
+
+export const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
+export type Day = (typeof DAYS)[number];
+
+export type TimetableSlot = {
+  id: string;
+  day: Day | string;
+  period_no: number;
+  start_time: string;
+  end_time: string;
+  subject: string;
+  teacher: string;
+  room: string;
+};
+
+export type Timetable = {
+  id: string;
+  class_id: string;
+  academic_year: string;
+  status: string;
+  draft_slots: TimetableSlot[];
+  published_slots: TimetableSlot[];
+  updated_by_name: string | null;
+  published_by_name: string | null;
+  published_at: string | null;
+  updated_at: string;
+};
+
+function normaliseTimetable(row: Record<string, unknown> | null): Timetable | null {
+  if (!row) return null;
+  return {
+    ...(row as unknown as Timetable),
+    draft_slots: (row['draft_slots'] as TimetableSlot[]) ?? [],
+    published_slots: (row['published_slots'] as TimetableSlot[]) ?? [],
+  };
+}
+
+export async function getTimetable(classId: string, academicYear = ACADEMIC_YEAR) {
+  const { data, error } = await supabase
+    .from("timetables")
+    .select("*")
+    .eq("class_id", classId)
+    .eq("academic_year", academicYear)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return normaliseTimetable(data as never);
+}
+
+/** Editors save into draft_slots; students never read this column. */
+export async function saveTimetableDraft(input: {
+  classId: string;
+  academicYear?: string;
+  slots: TimetableSlot[];
+  editorName: string;
+}) {
+  const row = {
+    class_id: input.classId,
+    academic_year: input.academicYear ?? ACADEMIC_YEAR,
+    draft_slots: input.slots as never,
+    status: "draft",
+    updated_by_name: input.editorName,
+    updated_at: new Date().toISOString(),
+  };
+  unwrap(
+    await supabase.from("timetables").upsert(row as never, { onConflict: "class_id,academic_year" }),
+  );
+}
+
+/** Copies the current draft into the published column students read. */
+export async function publishTimetable(input: {
+  classId: string;
+  academicYear?: string;
+  slots: TimetableSlot[];
+  editorName: string;
+}) {
+  const now = new Date().toISOString();
+  const row = {
+    class_id: input.classId,
+    academic_year: input.academicYear ?? ACADEMIC_YEAR,
+    draft_slots: input.slots as never,
+    published_slots: input.slots as never,
+    status: "published",
+    updated_by_name: input.editorName,
+    published_by_name: input.editorName,
+    published_at: now,
+    updated_at: now,
+  };
+  unwrap(
+    await supabase.from("timetables").upsert(row as never, { onConflict: "class_id,academic_year" }),
+  );
+}
+
+export function sortSlots(slots: TimetableSlot[]) {
+  const dayIndex = (d: string) => {
+    const i = (DAYS as readonly string[]).indexOf(d);
+    return i === -1 ? 99 : i;
+  };
+  return [...slots].sort(
+    (a, b) => dayIndex(a.day) - dayIndex(b.day) || a.period_no - b.period_no || a.start_time.localeCompare(b.start_time),
+  );
+}
+
+export function todayDay(): Day {
+  const map: Day[] = ["Mon", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const d = new Date().getDay(); // 0 = Sunday
+  return map[d === 0 ? 0 : d] ?? "Mon";
 }
