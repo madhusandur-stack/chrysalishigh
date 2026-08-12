@@ -74,7 +74,6 @@ export const teacherDockNav: NavItem[] = [
   { to: "/teacher-portal/homework", label: "Homework", icon: BookOpen },
   { to: "/teacher-portal/attendance", label: "Attend", icon: CalendarCheck },
   { to: "/teacher-portal/notices", label: "Notices", icon: Megaphone },
-  { to: "/teacher-portal/timetable", label: "Timetable", icon: Clock },
   { to: "/teacher-portal/profile", label: "Me", icon: User },
 ];
 
@@ -97,6 +96,5 @@ export const staffDockNav: NavItem[] = [
   { to: "/staff-portal/students", label: "Students", icon: Users },
   { to: "/staff-portal/teachers", label: "Teachers", icon: GraduationCap },
   { to: "/staff-portal/notices", label: "Notices", icon: Megaphone },
-  { to: "/staff-portal/timetable", label: "Timetable", icon: Clock },
   { to: "/staff-portal/profile", label: "Me", icon: User },
 ];
