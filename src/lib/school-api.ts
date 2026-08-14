@@ -14,11 +14,22 @@ export const TERMS = ["Term 1", "Term 2"] as const;
 export const REPORT_TERMS = ["Term 1", "Term 2", "Final"] as const;
 export const SUBJECTS = [
   "Mathematics",
+  "Physics",
+  "Chemistry",
+  "Biology",
   "Science",
   "English",
+  "Geography",
+  "History",
+  "H&C",
   "Social Studies",
   "Hindi",
+  "SL",
+  "III Group",
+  "III Group Practical",
   "Computer Science",
+  "Games",
+  "Library",
 ] as const;
 
 export type Term = (typeof TERMS)[number];
@@ -706,6 +717,8 @@ export type TimetableSlot = {
   subject: string;
   teacher: string;
   room: string;
+  /** Break rows (Snacks / Lunch) render full-width and have no teacher. */
+  is_break?: boolean;
 };
 
 export type Timetable = {
