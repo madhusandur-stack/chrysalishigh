@@ -14,7 +14,21 @@ const demoRegistrationSchema = z.object({
   studentId: z.string().trim().max(48).optional(),
 });
 
-const DEMO_ACCOUNTS = [
+type DemoAccount = {
+  email: string;
+  password: string;
+  role: z.infer<typeof appRoleSchema>;
+  fullName: string;
+  campusSlug?: string;
+  studentId?: string;
+  grade?: string;
+  section?: string;
+  house?: string;
+  subject?: string;
+};
+
+const DEMO_ACCOUNTS: DemoAccount[] = [
+
   {
     email: "student.varthur@demo.chrysalisconnect.in",
     password: "Student@123",
