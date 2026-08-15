@@ -158,7 +158,7 @@ export const seedDemoAccounts = createServerFn({ method: "POST" }).handler(async
       house: account.house,
       demo: true,
     };
-    const { data, error } = existing
+    let { data, error } = existing
       ? await admin.auth.admin.updateUserById(existing.id, {
           password: account.password,
           email_confirm: true,
@@ -170,7 +170,16 @@ export const seedDemoAccounts = createServerFn({ method: "POST" }).handler(async
           email_confirm: true,
           user_metadata: metadata,
         });
+    // Existing legacy demo logins may use a password the auth service now rejects
+    // as weak — keep the account usable instead of failing the whole seed.
+    if (error && existing && /weak|pwned|breach/i.test(error.message)) {
+      ({ data, error } = await admin.auth.admin.updateUserById(existing.id, {
+        email_confirm: true,
+        user_metadata: metadata,
+      }));
+    }
     if (error || !data.user) throw new Error(`${account.email}: ${error?.message ?? "Auth user was not returned."}`);
+
     await ensureProfileAndRole(admin, {
       userId: data.user.id,
       fullName: account.fullName,
