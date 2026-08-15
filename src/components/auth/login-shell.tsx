@@ -9,6 +9,8 @@ import { SoftAurora } from "@/components/portal/aurora";
 import { CampusSelector, type CampusOption } from "@/components/auth/campus-selector";
 import { SmoothInput, SmoothPasswordInput } from "@/components/ui/smooth-input";
 import { createDevelopmentAccount } from "@/lib/dev-auth.functions";
+import { seedDemoAccounts } from "@/lib/demo-seed.functions";
+
 import { useTheme } from "@/lib/theme";
 import { usePerfMode } from "@/hooks/use-perf-mode";
 import { useHydrated } from "@/hooks/use-hydrated";
