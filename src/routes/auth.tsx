@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { DevelopmentAccountPanel, LoginShell, DemoAccountsPanel } from "@/components/auth/login-shell";
 import { listCampuses } from "@/lib/campuses.functions";
 import { SmoothInput, SmoothPasswordInput } from "@/components/ui/smooth-input";
-import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
