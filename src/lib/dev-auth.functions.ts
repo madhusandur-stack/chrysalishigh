@@ -14,7 +14,21 @@ const demoRegistrationSchema = z.object({
   studentId: z.string().trim().max(48).optional(),
 });
 
-const DEMO_ACCOUNTS = [
+type DemoAccount = {
+  email: string;
+  password: string;
+  role: z.infer<typeof appRoleSchema>;
+  fullName: string;
+  campusSlug?: string;
+  studentId?: string;
+  grade?: string;
+  section?: string;
+  house?: string;
+  subject?: string;
+};
+
+const DEMO_ACCOUNTS: DemoAccount[] = [
+
   {
     email: "student.varthur@demo.chrysalisconnect.in",
     password: "Student@123",
@@ -34,10 +48,25 @@ const DEMO_ACCOUNTS = [
     campusSlug: "varthur",
   },
   {
+    email: "panel.teacher@demo.chrysalisconnect.in",
+    password: "Chrysalis#Teach2026",
+    role: "teacher" as const,
+    fullName: "Panel Demo Teacher",
+    campusSlug: "varthur",
+    subject: "Mathematics",
+  },
+  {
     email: "admin.varthur@demo.chrysalisconnect.in",
     password: "Admin@123",
     role: "campus_admin" as const,
     fullName: "Demo Campus Admin",
+    campusSlug: "varthur",
+  },
+  {
+    email: "panel.admin@demo.chrysalisconnect.in",
+    password: "Chrysalis#Admin2026",
+    role: "campus_admin" as const,
+    fullName: "Panel Demo Admin",
     campusSlug: "varthur",
   },
   {
@@ -47,6 +76,7 @@ const DEMO_ACCOUNTS = [
     fullName: "System Administrator",
   },
 ];
+
 
 type AdminClient = Awaited<ReturnType<typeof getAdminClient>>;
 
@@ -128,7 +158,7 @@ export const seedDemoAccounts = createServerFn({ method: "POST" }).handler(async
       house: account.house,
       demo: true,
     };
-    const { data, error } = existing
+    let { data, error } = existing
       ? await admin.auth.admin.updateUserById(existing.id, {
           password: account.password,
           email_confirm: true,
@@ -140,7 +170,16 @@ export const seedDemoAccounts = createServerFn({ method: "POST" }).handler(async
           email_confirm: true,
           user_metadata: metadata,
         });
+    // Existing legacy demo logins may use a password the auth service now rejects
+    // as weak — keep the account usable instead of failing the whole seed.
+    if (error && existing && /weak|pwned|breach/i.test(error.message)) {
+      ({ data, error } = await admin.auth.admin.updateUserById(existing.id, {
+        email_confirm: true,
+        user_metadata: metadata,
+      }));
+    }
     if (error || !data.user) throw new Error(`${account.email}: ${error?.message ?? "Auth user was not returned."}`);
+
     await ensureProfileAndRole(admin, {
       userId: data.user.id,
       fullName: account.fullName,
@@ -151,8 +190,29 @@ export const seedDemoAccounts = createServerFn({ method: "POST" }).handler(async
       section: account.section ?? null,
       house: account.house ?? null,
     });
+    if ((account.role === "teacher" || account.role === "campus_admin") && campusId) {
+      const { data: staffRow } = await admin
+        .from("staff_members")
+        .select("id")
+        .eq("email", account.email)
+        .maybeSingle();
+      const payload = {
+        campus_id: campusId,
+        user_id: data.user.id,
+        full_name: account.fullName,
+        email: account.email,
+        role: account.role,
+        subject: account.subject ?? null,
+      };
+      if (staffRow) {
+        await admin.from("staff_members").update(payload).eq("id", staffRow.id);
+      } else {
+        await admin.from("staff_members").insert(payload);
+      }
+    }
     results.push({ email: account.email, status: existing ? "updated" : "created", userId: data.user.id });
   }
+
 
   return { ok: true, results };
 });

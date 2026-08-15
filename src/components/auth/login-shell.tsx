@@ -9,6 +9,8 @@ import { SoftAurora } from "@/components/portal/aurora";
 import { CampusSelector, type CampusOption } from "@/components/auth/campus-selector";
 import { SmoothInput, SmoothPasswordInput } from "@/components/ui/smooth-input";
 import { createDevelopmentAccount } from "@/lib/dev-auth.functions";
+import { seedDemoAccounts } from "@/lib/demo-seed.functions";
+
 import { useTheme } from "@/lib/theme";
 import { usePerfMode } from "@/hooks/use-perf-mode";
 import { useHydrated } from "@/hooks/use-hydrated";
@@ -312,11 +314,47 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-export function DemoAccountsPanel({
-  accounts,
-}: {
-  accounts: { label: string; email: string; password: string }[];
-}) {
+export type DemoAccount = {
+  label: string;
+  email: string;
+  password: string;
+  /** Where a one-click sign-in should land. */
+  redirectTo?: "/dashboard" | "/teacher-portal" | "/staff-portal";
+};
+
+export function DemoAccountsPanel({ accounts }: { accounts: DemoAccount[] }) {
+  const navigate = useNavigate();
+  const seed = useServerFn(seedDemoAccounts);
+  const [busy, setBusy] = useState<string | null>(null);
+
+  async function provision() {
+    setBusy("provision");
+    try {
+      const res = await seed({});
+      toast.success(`${res.results.length} demo accounts ready.`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function signIn(account: DemoAccount) {
+    setBusy(account.email);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: account.email,
+        password: account.password,
+      });
+      if (error) throw error;
+      navigate({ to: account.redirectTo ?? "/dashboard" });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(null);
+    }
+  }
+
   return (
     <details className="group rounded-[14px] border border-dashed border-line bg-paper/60 p-4 text-sm">
       <summary className="flex cursor-pointer items-center justify-between font-medium text-[color:var(--ink-soft)]">
@@ -326,14 +364,35 @@ export function DemoAccountsPanel({
       <div className="mt-3 space-y-2">
         {accounts.map((a) => (
           <div key={a.email} className="rounded-[10px] border border-line bg-paper p-3 text-xs">
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--ink-soft)]">
-              {a.label}
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--ink-soft)]">
+                  {a.label}
+                </div>
+                <div className="mono mt-1 truncate">{a.email}</div>
+                <div className="mono text-[color:var(--ink-soft)]">{a.password}</div>
+              </div>
+              <button
+                type="button"
+                disabled={busy !== null}
+                onClick={() => signIn(a)}
+                className="shrink-0 rounded-[10px] border border-line px-2.5 py-1.5 text-[11px] font-semibold text-[color:var(--signal)] transition hover:bg-[color:var(--signal-soft)] disabled:opacity-50"
+              >
+                {busy === a.email ? "…" : "Sign in"}
+              </button>
             </div>
-            <div className="mono mt-1 truncate">{a.email}</div>
-            <div className="mono text-[color:var(--ink-soft)]">{a.password}</div>
           </div>
         ))}
+        <button
+          type="button"
+          disabled={busy !== null}
+          onClick={provision}
+          className="w-full rounded-[10px] border border-dashed border-line px-3 py-2 text-[11px] text-[color:var(--ink-soft)] transition hover:text-[color:var(--ink)] disabled:opacity-50"
+        >
+          {busy === "provision" ? "Provisioning…" : "Provision / reset these demo accounts"}
+        </button>
       </div>
     </details>
   );
 }
+

@@ -1,13 +1,11 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { DevelopmentAccountPanel, LoginShell, DemoAccountsPanel } from "@/components/auth/login-shell";
-import { seedDemoAccounts } from "@/lib/demo-seed.functions";
 import { listCampuses } from "@/lib/campuses.functions";
 import { SmoothInput, SmoothPasswordInput } from "@/components/ui/smooth-input";
-import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -23,17 +21,9 @@ function AuthPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const seed = useServerFn(seedDemoAccounts);
   const listFn = useServerFn(listCampuses);
   const { data: campuses = [] } = useQuery({ queryKey: ["campuses"], queryFn: () => listFn() });
-  const seedMut = useMutation({
-    mutationFn: () => seed({}),
-    onSuccess: (data) => toast.success(`${data.results.length} demo accounts verified. Sign in with the credentials below.`),
-    onError: (e: Error) => {
-      console.error("[demo-auth] Provisioning failed", e);
-      toast.error(e.message);
-    },
-  });
+
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -90,17 +80,10 @@ function AuthPage() {
           </div>
           <DemoAccountsPanel
             accounts={[
-              { label: "Student · Varthur", email: "student.varthur@demo.chrysalisconnect.in", password: "Student@123" },
+              { label: "Student · Varthur", email: "student.varthur@demo.chrysalisconnect.in", password: "Student@123", redirectTo: "/dashboard" },
             ]}
           />
-          <button
-            type="button"
-            disabled={seedMut.isPending}
-            onClick={() => seedMut.mutate()}
-            className="w-full rounded-[14px] border border-dashed border-line bg-paper/60 px-4 py-2 text-xs text-[color:var(--ink-soft)] hover:text-[color:var(--ink)]"
-          >
-            {seedMut.isPending ? "Provisioning demo accounts…" : "Provision all demo accounts"}
-          </button>
+
           <DevelopmentAccountPanel kind="student" campuses={campuses} />
         </div>
       }
