@@ -167,8 +167,29 @@ export const seedDemoAccounts = createServerFn({ method: "POST" }).handler(async
       section: account.section ?? null,
       house: account.house ?? null,
     });
+    if ((account.role === "teacher" || account.role === "campus_admin") && campusId) {
+      const { data: staffRow } = await admin
+        .from("staff_members")
+        .select("id")
+        .eq("email", account.email)
+        .maybeSingle();
+      const payload = {
+        campus_id: campusId,
+        user_id: data.user.id,
+        full_name: account.fullName,
+        email: account.email,
+        role: account.role,
+        subject: account.subject ?? null,
+      };
+      if (staffRow) {
+        await admin.from("staff_members").update(payload).eq("id", staffRow.id);
+      } else {
+        await admin.from("staff_members").insert(payload);
+      }
+    }
     results.push({ email: account.email, status: existing ? "updated" : "created", userId: data.user.id });
   }
+
 
   return { ok: true, results };
 });
