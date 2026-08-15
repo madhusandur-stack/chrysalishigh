@@ -90,17 +90,10 @@ function AuthPage() {
           </div>
           <DemoAccountsPanel
             accounts={[
-              { label: "Student · Varthur", email: "student.varthur@demo.chrysalisconnect.in", password: "Student@123" },
+              { label: "Student · Varthur", email: "student.varthur@demo.chrysalisconnect.in", password: "Student@123", redirectTo: "/dashboard" },
             ]}
           />
-          <button
-            type="button"
-            disabled={seedMut.isPending}
-            onClick={() => seedMut.mutate()}
-            className="w-full rounded-[14px] border border-dashed border-line bg-paper/60 px-4 py-2 text-xs text-[color:var(--ink-soft)] hover:text-[color:var(--ink)]"
-          >
-            {seedMut.isPending ? "Provisioning demo accounts…" : "Provision all demo accounts"}
-          </button>
+
           <DevelopmentAccountPanel kind="student" campuses={campuses} />
         </div>
       }
