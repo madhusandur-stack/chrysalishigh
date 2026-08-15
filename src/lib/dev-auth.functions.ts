@@ -34,10 +34,25 @@ const DEMO_ACCOUNTS = [
     campusSlug: "varthur",
   },
   {
+    email: "panel.teacher@demo.chrysalisconnect.in",
+    password: "PanelTeacher@123",
+    role: "teacher" as const,
+    fullName: "Panel Demo Teacher",
+    campusSlug: "varthur",
+    subject: "Mathematics",
+  },
+  {
     email: "admin.varthur@demo.chrysalisconnect.in",
     password: "Admin@123",
     role: "campus_admin" as const,
     fullName: "Demo Campus Admin",
+    campusSlug: "varthur",
+  },
+  {
+    email: "panel.admin@demo.chrysalisconnect.in",
+    password: "PanelAdmin@123",
+    role: "campus_admin" as const,
+    fullName: "Panel Demo Admin",
     campusSlug: "varthur",
   },
   {
@@ -47,6 +62,7 @@ const DEMO_ACCOUNTS = [
     fullName: "System Administrator",
   },
 ];
+
 
 type AdminClient = Awaited<ReturnType<typeof getAdminClient>>;
 
