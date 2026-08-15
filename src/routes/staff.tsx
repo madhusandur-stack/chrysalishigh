@@ -71,7 +71,7 @@ function StaffLogin() {
           </div>
           <DemoAccountsPanel
             accounts={[
-              { label: "Admin Panel · Varthur", email: "panel.admin@demo.chrysalisconnect.in", password: "PanelAdmin@123", redirectTo: "/staff-portal" },
+              { label: "Admin Panel · Varthur", email: "panel.admin@demo.chrysalisconnect.in", password: "Chrysalis#Admin2026", redirectTo: "/staff-portal" },
               { label: "Campus Admin · Varthur", email: "admin.varthur@demo.chrysalisconnect.in", password: "Admin@123", redirectTo: "/staff-portal" },
               { label: "System Administrator", email: "superadmin@demo.chrysalisconnect.in", password: "SuperAdmin@123", redirectTo: "/staff-portal" },
             ]}

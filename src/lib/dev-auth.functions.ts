@@ -49,7 +49,7 @@ const DEMO_ACCOUNTS: DemoAccount[] = [
   },
   {
     email: "panel.teacher@demo.chrysalisconnect.in",
-    password: "PanelTeacher@123",
+    password: "Chrysalis#Teach2026",
     role: "teacher" as const,
     fullName: "Panel Demo Teacher",
     campusSlug: "varthur",
@@ -64,7 +64,7 @@ const DEMO_ACCOUNTS: DemoAccount[] = [
   },
   {
     email: "panel.admin@demo.chrysalisconnect.in",
-    password: "PanelAdmin@123",
+    password: "Chrysalis#Admin2026",
     role: "campus_admin" as const,
     fullName: "Panel Demo Admin",
     campusSlug: "varthur",

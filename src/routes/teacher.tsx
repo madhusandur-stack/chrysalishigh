@@ -72,7 +72,7 @@ function TeacherLogin() {
           </div>
           <DemoAccountsPanel
             accounts={[
-              { label: "Teacher Panel · Varthur", email: "panel.teacher@demo.chrysalisconnect.in", password: "PanelTeacher@123", redirectTo: "/teacher-portal" },
+              { label: "Teacher Panel · Varthur", email: "panel.teacher@demo.chrysalisconnect.in", password: "Chrysalis#Teach2026", redirectTo: "/teacher-portal" },
               { label: "Teacher · Varthur", email: "teacher.varthur@demo.chrysalisconnect.in", password: "Teacher@123", redirectTo: "/teacher-portal" },
             ]}
           />
