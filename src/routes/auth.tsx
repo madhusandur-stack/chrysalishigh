@@ -23,17 +23,9 @@ function AuthPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const seed = useServerFn(seedDemoAccounts);
   const listFn = useServerFn(listCampuses);
   const { data: campuses = [] } = useQuery({ queryKey: ["campuses"], queryFn: () => listFn() });
-  const seedMut = useMutation({
-    mutationFn: () => seed({}),
-    onSuccess: (data) => toast.success(`${data.results.length} demo accounts verified. Sign in with the credentials below.`),
-    onError: (e: Error) => {
-      console.error("[demo-auth] Provisioning failed", e);
-      toast.error(e.message);
-    },
-  });
+
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
