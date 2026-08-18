@@ -188,7 +188,7 @@ export const importStudentMasterData = createServerFn({ method: "POST" })
       for (const [k, v] of optional) if (v !== undefined) patch[k] = v;
 
       if (match) {
-        const { error } = await supabaseAdmin.from("students").update(patch).eq("id", match.id);
+        const { error } = await supabaseAdmin.from("students").update(patch as never).eq("id", match.id);
         if (error) {
           outcomes.push({ rowNumber: row.rowNumber, name: row.full_name, result: "error", detail: error.message });
           continue;
