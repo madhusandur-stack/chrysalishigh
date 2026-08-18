@@ -1251,6 +1251,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_see_notice: {
+        Args: {
+          _class_ids: string[]
+          _scope: string
+          _student_ids: string[]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       has_campus_role: {
         Args: {
           _campus_id: string
@@ -1266,6 +1275,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role:
