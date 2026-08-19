@@ -17,6 +17,7 @@ import {
   ClipboardList,
   School,
   BarChart3,
+  Database,
   Clock,
   ClipboardCheck,
   NotebookPen,
