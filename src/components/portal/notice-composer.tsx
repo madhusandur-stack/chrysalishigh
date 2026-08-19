@@ -337,19 +337,50 @@ function NoticeForm({
 
         {scope === "students" && (
           <div className="rounded-[14px] border border-line bg-paper-2 p-4">
-            <Field label="Filter by class">
-              <Select
-                value={studentClassFilter}
-                onChange={(e) => setStudentClassFilter(e.target.value)}
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field label="Filter by class">
+                <Select
+                  value={studentClassFilter}
+                  onChange={(e) => setStudentClassFilter(e.target.value)}
+                >
+                  <option value="">All classes</option>
+                  {classes.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.grade} – {c.section}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Field label="Search students">
+                <TextInput
+                  value={studentSearch}
+                  onChange={(e) => setStudentSearch(e.target.value)}
+                  placeholder="Name or roll number"
+                />
+              </Field>
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <GhostButton
+                type="button"
+                onClick={() =>
+                  setStudentIds((prev) => [
+                    ...new Set([...prev, ...filteredStudents.map((s) => s.id)]),
+                  ])
+                }
               >
-                <option value="">All classes</option>
-                {classes.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.grade} – {c.section}
-                  </option>
-                ))}
-              </Select>
-            </Field>
+                Select all shown ({filteredStudents.length})
+              </GhostButton>
+              <GhostButton
+                type="button"
+                onClick={() =>
+                  setStudentIds((prev) => prev.filter((id) => !filteredStudents.some((s) => s.id === id)))
+                }
+              >
+                Clear shown
+              </GhostButton>
+            </div>
+
             <div className="mt-3 max-h-56 overflow-auto rounded-[10px] border border-line bg-paper">
               {filteredStudents.map((s) => {
                 const on = studentIds.includes(s.id);
