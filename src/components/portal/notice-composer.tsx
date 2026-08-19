@@ -263,9 +263,12 @@ function NoticeForm({
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const filteredStudents = students.filter((s) =>
-    studentClassFilter ? s.class_id === studentClassFilter : true,
-  );
+  const q = studentSearch.trim().toLowerCase();
+  const filteredStudents = students
+    .filter((s) => (studentClassFilter ? s.class_id === studentClassFilter : true))
+    .filter((s) => (q ? s.full_name.toLowerCase().includes(q) || String(s.roll_no).includes(q) : true))
+    .sort((a, b) => a.roll_no - b.roll_no);
+
 
   return (
     <div className="mb-6 rounded-[20px] border border-line bg-paper p-6">
