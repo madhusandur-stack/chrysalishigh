@@ -167,7 +167,7 @@ function NoticeRow({
   notice: Notice;
   classes: { id: string; grade: string; section: string }[];
   studentCount: number;
-  onDelete: () => void;
+  onDelete?: () => void;
 }) {
   const target =
     notice.scope === "school"
