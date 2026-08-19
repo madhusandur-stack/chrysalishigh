@@ -87,6 +87,7 @@ export const staffNav: NavItem[] = [
   { to: "/staff-portal/regularization", label: "Regularization", icon: ClipboardCheck },
   { to: "/staff-portal/homework", label: "Homework", icon: BookOpen },
   { to: "/staff-portal/notices", label: "Notices", icon: Megaphone },
+  { to: "/staff-portal/master-data", label: "Master Data", icon: Database },
   { to: "/staff-portal/timetable", label: "Timetable", icon: Clock },
   { to: "/staff-portal/profile", label: "Profile", icon: User },
 ];
