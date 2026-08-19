@@ -236,6 +236,7 @@ function NoticeForm({
   const [pinned, setPinned] = useState(false);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [studentClassFilter, setStudentClassFilter] = useState<string>(classes[0]?.id ?? "");
+  const [studentSearch, setStudentSearch] = useState("");
 
   const save = useMutation({
     mutationFn: async () => {
