@@ -67,15 +67,13 @@ export function NoticeManager({
   }, [classesQ.data, lockedClassIds]);
 
   const mine = useMemo(() => {
-    const rows = (noticesQ.data ?? []).filter((n) =>
-      authorRole === "teacher" ? n.author_role === "teacher" : true,
-    );
+    const rows = [...(noticesQ.data ?? [])];
     return rows.sort(
       (a, b) =>
         Number(b.pinned) - Number(a.pinned) ||
         +new Date(b.published_at ?? b.created_at) - +new Date(a.published_at ?? a.created_at),
     );
-  }, [noticesQ.data, authorRole]);
+  }, [noticesQ.data]);
 
   const remove = useMutation({
     mutationFn: (id: string) => deleteNotice(id),
@@ -88,13 +86,20 @@ export function NoticeManager({
 
   return (
     <>
-      <div className="mb-5 flex justify-end">
-        <PrimaryButton onClick={() => setOpen((s) => !s)}>
-          {open ? "Close composer" : "New notice"}
-        </PrimaryButton>
-      </div>
+      {readOnly ? (
+        <div className="mb-5 rounded-[14px] border border-line bg-paper-2 px-4 py-3 text-xs text-[color:var(--ink-soft)]">
+          Notices are published by the school office. You can read every notice that applies to your
+          classes here.
+        </div>
+      ) : (
+        <div className="mb-5 flex justify-end">
+          <PrimaryButton onClick={() => setOpen((s) => !s)}>
+            {open ? "Close composer" : "New notice"}
+          </PrimaryButton>
+        </div>
+      )}
 
-      {open && (
+      {open && !readOnly && (
         <NoticeForm
           authorName={authorName}
           authorRole={authorRole}
@@ -124,7 +129,9 @@ export function NoticeManager({
           <Megaphone className="mx-auto mb-3 h-6 w-6 text-[color:var(--ink-soft)]" />
           <div className="text-sm font-medium">No notices yet</div>
           <p className="mt-1 text-sm text-[color:var(--ink-soft)]">
-            Publish one and it appears instantly on the targeted students' noticeboards.
+            {readOnly
+              ? "Notices published by the school office will appear here."
+              : "Publish one and it appears instantly on the targeted students' noticeboards."}
           </p>
         </div>
       ) : (
@@ -135,15 +142,20 @@ export function NoticeManager({
               notice={n}
               classes={classes}
               studentCount={(n.student_ids ?? []).length}
-              onDelete={() => {
-                if (confirm(`Delete "${n.title}"?`)) remove.mutate(n.id);
-              }}
+              onDelete={
+                readOnly
+                  ? undefined
+                  : () => {
+                      if (confirm(`Delete "${n.title}"?`)) remove.mutate(n.id);
+                    }
+              }
             />
           ))}
         </ul>
       )}
     </>
   );
+
 }
 
 function NoticeRow({
