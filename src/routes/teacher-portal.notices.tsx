@@ -19,9 +19,9 @@ function TeacherNotices() {
       <PortalPageHeader
         eyebrow="Notices"
         title="Notices"
-        description="Publish announcements to the whole school, specific classes or individual students."
+        description="Read announcements published by the school office for your classes and students."
       />
-      <NoticeManager authorName={authorName} authorRole="teacher" />
+      <NoticeManager authorName={authorName} authorRole="teacher" readOnly />
     </div>
   );
 }
