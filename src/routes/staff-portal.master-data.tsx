@@ -387,7 +387,7 @@ function MasterDataPage() {
           <SectionCard
             title="Import results"
             description="Master data is now live everywhere students appear."
-            action={
+            actions={
               <GhostButton onClick={downloadReport}>
                 <Download className="h-4 w-4" /> Report
               </GhostButton>

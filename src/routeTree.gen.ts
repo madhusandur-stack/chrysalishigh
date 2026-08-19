@@ -37,6 +37,7 @@ import { Route as StaffPortalStudentsRouteImport } from './routes/staff-portal.s
 import { Route as StaffPortalRegularizationRouteImport } from './routes/staff-portal.regularization'
 import { Route as StaffPortalProfileRouteImport } from './routes/staff-portal.profile'
 import { Route as StaffPortalNoticesRouteImport } from './routes/staff-portal.notices'
+import { Route as StaffPortalMasterDataRouteImport } from './routes/staff-portal.master-data'
 import { Route as StaffPortalHomeworkRouteImport } from './routes/staff-portal.homework'
 import { Route as StaffPortalClassesRouteImport } from './routes/staff-portal.classes'
 import { Route as StaffPortalAttendanceRouteImport } from './routes/staff-portal.attendance'
@@ -200,6 +201,11 @@ const StaffPortalNoticesRoute = StaffPortalNoticesRouteImport.update({
   path: '/notices',
   getParentRoute: () => StaffPortalRoute,
 } as any)
+const StaffPortalMasterDataRoute = StaffPortalMasterDataRouteImport.update({
+  id: '/master-data',
+  path: '/master-data',
+  getParentRoute: () => StaffPortalRoute,
+} as any)
 const StaffPortalHomeworkRoute = StaffPortalHomeworkRouteImport.update({
   id: '/homework',
   path: '/homework',
@@ -322,6 +328,7 @@ export interface FileRoutesByFullPath {
   '/staff-portal/attendance': typeof StaffPortalAttendanceRoute
   '/staff-portal/classes': typeof StaffPortalClassesRoute
   '/staff-portal/homework': typeof StaffPortalHomeworkRoute
+  '/staff-portal/master-data': typeof StaffPortalMasterDataRoute
   '/staff-portal/notices': typeof StaffPortalNoticesRoute
   '/staff-portal/profile': typeof StaffPortalProfileRoute
   '/staff-portal/regularization': typeof StaffPortalRegularizationRoute
@@ -368,6 +375,7 @@ export interface FileRoutesByTo {
   '/staff-portal/attendance': typeof StaffPortalAttendanceRoute
   '/staff-portal/classes': typeof StaffPortalClassesRoute
   '/staff-portal/homework': typeof StaffPortalHomeworkRoute
+  '/staff-portal/master-data': typeof StaffPortalMasterDataRoute
   '/staff-portal/notices': typeof StaffPortalNoticesRoute
   '/staff-portal/profile': typeof StaffPortalProfileRoute
   '/staff-portal/regularization': typeof StaffPortalRegularizationRoute
@@ -418,6 +426,7 @@ export interface FileRoutesById {
   '/staff-portal/attendance': typeof StaffPortalAttendanceRoute
   '/staff-portal/classes': typeof StaffPortalClassesRoute
   '/staff-portal/homework': typeof StaffPortalHomeworkRoute
+  '/staff-portal/master-data': typeof StaffPortalMasterDataRoute
   '/staff-portal/notices': typeof StaffPortalNoticesRoute
   '/staff-portal/profile': typeof StaffPortalProfileRoute
   '/staff-portal/regularization': typeof StaffPortalRegularizationRoute
@@ -468,6 +477,7 @@ export interface FileRouteTypes {
     | '/staff-portal/attendance'
     | '/staff-portal/classes'
     | '/staff-portal/homework'
+    | '/staff-portal/master-data'
     | '/staff-portal/notices'
     | '/staff-portal/profile'
     | '/staff-portal/regularization'
@@ -514,6 +524,7 @@ export interface FileRouteTypes {
     | '/staff-portal/attendance'
     | '/staff-portal/classes'
     | '/staff-portal/homework'
+    | '/staff-portal/master-data'
     | '/staff-portal/notices'
     | '/staff-portal/profile'
     | '/staff-portal/regularization'
@@ -563,6 +574,7 @@ export interface FileRouteTypes {
     | '/staff-portal/attendance'
     | '/staff-portal/classes'
     | '/staff-portal/homework'
+    | '/staff-portal/master-data'
     | '/staff-portal/notices'
     | '/staff-portal/profile'
     | '/staff-portal/regularization'
@@ -794,6 +806,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StaffPortalNoticesRouteImport
       parentRoute: typeof StaffPortalRoute
     }
+    '/staff-portal/master-data': {
+      id: '/staff-portal/master-data'
+      path: '/master-data'
+      fullPath: '/staff-portal/master-data'
+      preLoaderRoute: typeof StaffPortalMasterDataRouteImport
+      parentRoute: typeof StaffPortalRoute
+    }
     '/staff-portal/homework': {
       id: '/staff-portal/homework'
       path: '/homework'
@@ -975,6 +994,7 @@ interface StaffPortalRouteChildren {
   StaffPortalAttendanceRoute: typeof StaffPortalAttendanceRoute
   StaffPortalClassesRoute: typeof StaffPortalClassesRoute
   StaffPortalHomeworkRoute: typeof StaffPortalHomeworkRoute
+  StaffPortalMasterDataRoute: typeof StaffPortalMasterDataRoute
   StaffPortalNoticesRoute: typeof StaffPortalNoticesRoute
   StaffPortalProfileRoute: typeof StaffPortalProfileRoute
   StaffPortalRegularizationRoute: typeof StaffPortalRegularizationRoute
@@ -989,6 +1009,7 @@ const StaffPortalRouteChildren: StaffPortalRouteChildren = {
   StaffPortalAttendanceRoute: StaffPortalAttendanceRoute,
   StaffPortalClassesRoute: StaffPortalClassesRoute,
   StaffPortalHomeworkRoute: StaffPortalHomeworkRoute,
+  StaffPortalMasterDataRoute: StaffPortalMasterDataRoute,
   StaffPortalNoticesRoute: StaffPortalNoticesRoute,
   StaffPortalProfileRoute: StaffPortalProfileRoute,
   StaffPortalRegularizationRoute: StaffPortalRegularizationRoute,

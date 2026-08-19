@@ -43,19 +43,23 @@ export function NoticeManager({
   authorRole,
   defaultClassIds = [],
   lockedClassIds,
+  readOnly = false,
 }: {
   authorName: string;
   authorRole: "teacher" | "admin";
   defaultClassIds?: string[];
   /** When set, the composer can only target these classes (class teachers). */
   lockedClassIds?: string[];
+  /** Teachers and other non-admin roles get a view-only list. */
+  readOnly?: boolean;
 }) {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
 
   const noticesQ = useQuery({ queryKey: qk.notices, queryFn: listNotices, refetchInterval: 20_000 });
   const classesQ = useQuery({ queryKey: qk.classes, queryFn: listClasses, staleTime: 300_000 });
-  const studentsQ = useQuery({ queryKey: qk.students, queryFn: listStudents, staleTime: 300_000 });
+  const studentsQ = useQuery({ queryKey: qk.students, queryFn: listStudents, staleTime: 300_000, enabled: !readOnly });
+
 
   const classes = useMemo(() => {
     const all = (classesQ.data ?? []) as { id: string; grade: string; section: string }[];
@@ -63,15 +67,13 @@ export function NoticeManager({
   }, [classesQ.data, lockedClassIds]);
 
   const mine = useMemo(() => {
-    const rows = (noticesQ.data ?? []).filter((n) =>
-      authorRole === "teacher" ? n.author_role === "teacher" : true,
-    );
+    const rows = [...(noticesQ.data ?? [])];
     return rows.sort(
       (a, b) =>
         Number(b.pinned) - Number(a.pinned) ||
         +new Date(b.published_at ?? b.created_at) - +new Date(a.published_at ?? a.created_at),
     );
-  }, [noticesQ.data, authorRole]);
+  }, [noticesQ.data]);
 
   const remove = useMutation({
     mutationFn: (id: string) => deleteNotice(id),
@@ -84,13 +86,20 @@ export function NoticeManager({
 
   return (
     <>
-      <div className="mb-5 flex justify-end">
-        <PrimaryButton onClick={() => setOpen((s) => !s)}>
-          {open ? "Close composer" : "New notice"}
-        </PrimaryButton>
-      </div>
+      {readOnly ? (
+        <div className="mb-5 rounded-[14px] border border-line bg-paper-2 px-4 py-3 text-xs text-[color:var(--ink-soft)]">
+          Notices are published by the school office. You can read every notice that applies to your
+          classes here.
+        </div>
+      ) : (
+        <div className="mb-5 flex justify-end">
+          <PrimaryButton onClick={() => setOpen((s) => !s)}>
+            {open ? "Close composer" : "New notice"}
+          </PrimaryButton>
+        </div>
+      )}
 
-      {open && (
+      {open && !readOnly && (
         <NoticeForm
           authorName={authorName}
           authorRole={authorRole}
@@ -120,7 +129,9 @@ export function NoticeManager({
           <Megaphone className="mx-auto mb-3 h-6 w-6 text-[color:var(--ink-soft)]" />
           <div className="text-sm font-medium">No notices yet</div>
           <p className="mt-1 text-sm text-[color:var(--ink-soft)]">
-            Publish one and it appears instantly on the targeted students' noticeboards.
+            {readOnly
+              ? "Notices published by the school office will appear here."
+              : "Publish one and it appears instantly on the targeted students' noticeboards."}
           </p>
         </div>
       ) : (
@@ -131,15 +142,20 @@ export function NoticeManager({
               notice={n}
               classes={classes}
               studentCount={(n.student_ids ?? []).length}
-              onDelete={() => {
-                if (confirm(`Delete "${n.title}"?`)) remove.mutate(n.id);
-              }}
+              onDelete={
+                readOnly
+                  ? undefined
+                  : () => {
+                      if (confirm(`Delete "${n.title}"?`)) remove.mutate(n.id);
+                    }
+              }
             />
           ))}
         </ul>
       )}
     </>
   );
+
 }
 
 function NoticeRow({
@@ -151,7 +167,7 @@ function NoticeRow({
   notice: Notice;
   classes: { id: string; grade: string; section: string }[];
   studentCount: number;
-  onDelete: () => void;
+  onDelete?: () => void;
 }) {
   const target =
     notice.scope === "school"
@@ -183,13 +199,15 @@ function NoticeRow({
             {new Date(notice.published_at ?? notice.created_at).toLocaleString()}
           </div>
         </div>
-        <button
-          onClick={onDelete}
-          className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-[color:var(--ink-soft)] transition hover:bg-paper-2 hover:text-[color:var(--ember)]"
-          aria-label={`Delete ${notice.title}`}
-        >
-          <Trash2 className="h-4 w-4" />
-        </button>
+        {onDelete && (
+          <button
+            onClick={onDelete}
+            className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-[color:var(--ink-soft)] transition hover:bg-paper-2 hover:text-[color:var(--ember)]"
+            aria-label={`Delete ${notice.title}`}
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        )}
       </div>
     </li>
   );
@@ -218,6 +236,7 @@ function NoticeForm({
   const [pinned, setPinned] = useState(false);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [studentClassFilter, setStudentClassFilter] = useState<string>(classes[0]?.id ?? "");
+  const [studentSearch, setStudentSearch] = useState("");
 
   const save = useMutation({
     mutationFn: async () => {
@@ -244,9 +263,12 @@ function NoticeForm({
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const filteredStudents = students.filter((s) =>
-    studentClassFilter ? s.class_id === studentClassFilter : true,
-  );
+  const q = studentSearch.trim().toLowerCase();
+  const filteredStudents = students
+    .filter((s) => (studentClassFilter ? s.class_id === studentClassFilter : true))
+    .filter((s) => (q ? s.full_name.toLowerCase().includes(q) || String(s.roll_no).includes(q) : true))
+    .sort((a, b) => a.roll_no - b.roll_no);
+
 
   return (
     <div className="mb-6 rounded-[20px] border border-line bg-paper p-6">
@@ -319,19 +341,50 @@ function NoticeForm({
 
         {scope === "students" && (
           <div className="rounded-[14px] border border-line bg-paper-2 p-4">
-            <Field label="Filter by class">
-              <Select
-                value={studentClassFilter}
-                onChange={(e) => setStudentClassFilter(e.target.value)}
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field label="Filter by class">
+                <Select
+                  value={studentClassFilter}
+                  onChange={(e) => setStudentClassFilter(e.target.value)}
+                >
+                  <option value="">All classes</option>
+                  {classes.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.grade} – {c.section}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Field label="Search students">
+                <TextInput
+                  value={studentSearch}
+                  onChange={(e) => setStudentSearch(e.target.value)}
+                  placeholder="Name or roll number"
+                />
+              </Field>
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <GhostButton
+                type="button"
+                onClick={() =>
+                  setStudentIds((prev) => [
+                    ...new Set([...prev, ...filteredStudents.map((s) => s.id)]),
+                  ])
+                }
               >
-                <option value="">All classes</option>
-                {classes.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.grade} – {c.section}
-                  </option>
-                ))}
-              </Select>
-            </Field>
+                Select all shown ({filteredStudents.length})
+              </GhostButton>
+              <GhostButton
+                type="button"
+                onClick={() =>
+                  setStudentIds((prev) => prev.filter((id) => !filteredStudents.some((s) => s.id === id)))
+                }
+              >
+                Clear shown
+              </GhostButton>
+            </div>
+
             <div className="mt-3 max-h-56 overflow-auto rounded-[10px] border border-line bg-paper">
               {filteredStudents.map((s) => {
                 const on = studentIds.includes(s.id);
