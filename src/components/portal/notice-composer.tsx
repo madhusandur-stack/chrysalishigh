@@ -199,13 +199,15 @@ function NoticeRow({
             {new Date(notice.published_at ?? notice.created_at).toLocaleString()}
           </div>
         </div>
-        <button
-          onClick={onDelete}
-          className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-[color:var(--ink-soft)] transition hover:bg-paper-2 hover:text-[color:var(--ember)]"
-          aria-label={`Delete ${notice.title}`}
-        >
-          <Trash2 className="h-4 w-4" />
-        </button>
+        {onDelete && (
+          <button
+            onClick={onDelete}
+            className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-[color:var(--ink-soft)] transition hover:bg-paper-2 hover:text-[color:var(--ember)]"
+            aria-label={`Delete ${notice.title}`}
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        )}
       </div>
     </li>
   );
