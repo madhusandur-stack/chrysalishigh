@@ -43,19 +43,23 @@ export function NoticeManager({
   authorRole,
   defaultClassIds = [],
   lockedClassIds,
+  readOnly = false,
 }: {
   authorName: string;
   authorRole: "teacher" | "admin";
   defaultClassIds?: string[];
   /** When set, the composer can only target these classes (class teachers). */
   lockedClassIds?: string[];
+  /** Teachers and other non-admin roles get a view-only list. */
+  readOnly?: boolean;
 }) {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
 
   const noticesQ = useQuery({ queryKey: qk.notices, queryFn: listNotices, refetchInterval: 20_000 });
   const classesQ = useQuery({ queryKey: qk.classes, queryFn: listClasses, staleTime: 300_000 });
-  const studentsQ = useQuery({ queryKey: qk.students, queryFn: listStudents, staleTime: 300_000 });
+  const studentsQ = useQuery({ queryKey: qk.students, queryFn: listStudents, staleTime: 300_000, enabled: !readOnly });
+
 
   const classes = useMemo(() => {
     const all = (classesQ.data ?? []) as { id: string; grade: string; section: string }[];
