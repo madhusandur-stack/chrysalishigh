@@ -1,17 +1,19 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { GraduationCap } from "lucide-react";
+import { Download, FileText, GraduationCap } from "lucide-react";
 import { Page, PageHeader } from "@/components/portal/page";
 import {
   EmptyState,
   ErrorState,
   Field,
+  GhostButton,
   LoadingRows,
   ProgressBar,
   SectionCard,
   Select,
   StatCard,
+  StatusPill,
   TableWrap,
   Td,
   Th,
@@ -21,6 +23,8 @@ import {
   getMyIdentity,
   gradeFor,
   listCce,
+  listPupa,
+  listReportCards,
   overallPercentage,
   qk,
   subjectPercentage,
