@@ -144,6 +144,7 @@ export const seedDemoAccounts = createServerFn({ method: "POST" }).handler(async
   const campusMap = new Map((campuses ?? []).map((campus) => [campus.slug, campus.id]));
   const users = await listAllUsers(admin);
   const results: Array<{ email: string; status: "created" | "updated"; userId: string }> = [];
+  const failures: string[] = [];
 
   for (const account of DEMO_ACCOUNTS) {
     const campusId = account.campusSlug ? campusMap.get(account.campusSlug) : null;
@@ -228,7 +229,7 @@ export const seedDemoAccounts = createServerFn({ method: "POST" }).handler(async
   }
 
 
-  return { ok: true, results };
+  return { ok: failures.length === 0, results, failures };
 });
 
 export const createDevelopmentAccount = createServerFn({ method: "POST" })
