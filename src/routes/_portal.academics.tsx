@@ -58,6 +58,14 @@ const CO_FIELDS = [
   ["participation", "Participation"],
 ] as const;
 
+const PUPA_FIELDS = [
+  ["strengths", "Strengths"],
+  ["improvements", "Areas to improve"],
+  ["observations", "Classroom observations"],
+  ["parent_support", "How parents can help"],
+  ["remarks", "Teacher's remarks"],
+] as const;
+
 function AcademicsPage() {
   const [term, setTerm] = useState<string>(TERMS[0]);
 
@@ -69,6 +77,22 @@ function AcademicsPage() {
     queryFn: () => listCce(student!.id),
     enabled: !!student,
   });
+
+  const cardsQ = useQuery({
+    queryKey: qk.reportCards(student?.id),
+    queryFn: () => listReportCards(student!.id),
+    enabled: !!student,
+  });
+  const pupaQ = useQuery({
+    queryKey: qk.pupa(student?.id),
+    queryFn: () => listPupa(student!.id),
+    enabled: !!student,
+  });
+
+  const cards = cardsQ.data ?? [];
+  /** Only final PUPA reports are visible to families; drafts stay with the teacher. */
+  const pupa = useMemo(() => (pupaQ.data ?? []).filter((p) => p.status === "final"), [pupaQ.data]);
+
 
   const rows = useMemo(
     () => (cceQ.data?.scholastic ?? []).filter((r) => r.term === term),
