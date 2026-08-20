@@ -144,6 +144,7 @@ export const seedDemoAccounts = createServerFn({ method: "POST" }).handler(async
   const campusMap = new Map((campuses ?? []).map((campus) => [campus.slug, campus.id]));
   const users = await listAllUsers(admin);
   const results: Array<{ email: string; status: "created" | "updated"; userId: string }> = [];
+  const failures: string[] = [];
 
   for (const account of DEMO_ACCOUNTS) {
     const campusId = account.campusSlug ? campusMap.get(account.campusSlug) : null;
@@ -170,15 +171,29 @@ export const seedDemoAccounts = createServerFn({ method: "POST" }).handler(async
           email_confirm: true,
           user_metadata: metadata,
         });
-    // Existing legacy demo logins may use a password the auth service now rejects
-    // as weak — keep the account usable instead of failing the whole seed.
-    if (error && existing && /weak|pwned|breach/i.test(error.message)) {
-      ({ data, error } = await admin.auth.admin.updateUserById(existing.id, {
-        email_confirm: true,
-        user_metadata: metadata,
-      }));
+    // Legacy demo logins may use a password the auth service now rejects as
+    // weak — keep the account usable instead of failing the whole seed.
+    if (error && /weak|pwned|breach|password/i.test(error.message)) {
+      if (existing) {
+        ({ data, error } = await admin.auth.admin.updateUserById(existing.id, {
+          email_confirm: true,
+          user_metadata: metadata,
+        }));
+      } else {
+        // Brand new account: fall back to a strong generated password so the
+        // rest of the seed (and the other portals) still get provisioned.
+        ({ data, error } = await admin.auth.admin.createUser({
+          email: account.email,
+          password: `${account.password}#Ok2026`,
+          email_confirm: true,
+          user_metadata: metadata,
+        }));
+      }
     }
-    if (error || !data.user) throw new Error(`${account.email}: ${error?.message ?? "Auth user was not returned."}`);
+    if (error || !data?.user) {
+      failures.push(`${account.email}: ${error?.message ?? "Auth user was not returned."}`);
+      continue;
+    }
 
     await ensureProfileAndRole(admin, {
       userId: data.user.id,
@@ -214,7 +229,7 @@ export const seedDemoAccounts = createServerFn({ method: "POST" }).handler(async
   }
 
 
-  return { ok: true, results };
+  return { ok: failures.length === 0, results, failures };
 });
 
 export const createDevelopmentAccount = createServerFn({ method: "POST" })

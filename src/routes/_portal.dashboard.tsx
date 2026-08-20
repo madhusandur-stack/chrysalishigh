@@ -126,7 +126,7 @@ function Dashboard() {
 
         {/* Report Card — 3 */}
         <StaggerItem className="md:col-span-3">
-          <Link to="/report-cards" className="card-surface card-hover flex h-full items-center gap-5 p-6">
+          <Link to="/academics" className="card-surface card-hover flex h-full items-center gap-5 p-6">
             <div className="grid h-14 w-14 shrink-0 place-items-center rounded-[14px] bg-[color-mix(in_srgb,var(--violet)_15%,transparent)] text-[color:var(--violet)]">
               <FileText className="h-6 w-6" strokeWidth={1.75} />
             </div>
@@ -191,7 +191,7 @@ function Dashboard() {
             <div className="grid grid-cols-2 gap-2">
               {[
                 { icon: Upload, label: "Homework", to: "/homework" },
-                { icon: FileText, label: "Report Card", to: "/report-cards" },
+                { icon: FileText, label: "Report Card", to: "/academics" },
                 { icon: Wallet, label: "Pay Fees", to: "/fees" },
                 { icon: CalendarCheck, label: "Calendar", to: "/calendar" },
               ].map((q) => (
