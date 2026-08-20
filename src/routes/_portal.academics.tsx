@@ -34,13 +34,17 @@ import {
 export const Route = createFileRoute("/_portal/academics")({
   head: () => ({
     meta: [
-      { title: "Academics — Chrysalis Connect" },
+      { title: "Academics & Report Cards — Chrysalis Connect" },
       {
         name: "description",
-        content: "CCE assessment marks, subject-wise grades and co-scholastic ratings for the current academic year.",
+        content:
+          "CCE assessment marks, subject grades, co-scholastic ratings, published report cards and teacher progress notes.",
       },
-      { property: "og:title", content: "Academics — Chrysalis Connect" },
-      { property: "og:description", content: "Subject-wise CCE marks, grades and co-scholastic ratings." },
+      { property: "og:title", content: "Academics & Report Cards — Chrysalis Connect" },
+      {
+        property: "og:description",
+        content: "Subject-wise CCE marks, grades, report cards and teacher progress notes in one place.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
