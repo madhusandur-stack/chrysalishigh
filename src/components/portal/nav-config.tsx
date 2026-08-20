@@ -34,7 +34,7 @@ export const studentNav: NavItem[] = [
   { to: "/timetable", label: "Timetable", icon: Clock },
   { to: "/calendar", label: "Calendar", icon: Calendar },
   { to: "/academics", label: "Academics", icon: GraduationCap },
-  { to: "/report-cards", label: "Report Cards", icon: FileText },
+  
   { to: "/diary", label: "Diary", icon: NotebookPen },
   { to: "/fees", label: "Fee Details", icon: Wallet },
   { to: "/documents", label: "Documents", icon: FolderOpen },
