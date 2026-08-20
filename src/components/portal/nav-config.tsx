@@ -4,7 +4,6 @@ import {
   BookOpen,
   CalendarCheck,
   Calendar,
-  FileText,
   Wallet,
   FolderOpen,
   Images,
