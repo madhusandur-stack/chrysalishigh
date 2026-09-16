@@ -64,6 +64,7 @@ function unwrap<T>({ data, error }: { data: T; error: { message: string } | null
 export type Student = {
   id: string;
   class_id: string;
+  user_id: string | null;
   full_name: string;
   roll_no: number;
   admission_no: string;
@@ -112,12 +113,18 @@ export async function listClasses() {
   );
 }
 
-/** The student / staff identity the current demo session represents. */
+/** The student / staff identity linked to the currently authenticated account. */
 export async function getMyIdentity() {
+  const { data: auth, error: authError } = await supabase.auth.getUser();
+  if (authError) throw new Error(authError.message);
+  if (!auth.user) throw new Error("Your session has expired. Please sign in again.");
+
   const [students, staff] = await Promise.all([
-    supabase.from("students").select("*").eq("is_portal_demo", true).maybeSingle(),
-    supabase.from("staff_members").select("*").eq("is_portal_demo", true).maybeSingle(),
+    supabase.from("students").select("*").eq("user_id", auth.user.id).maybeSingle(),
+    supabase.from("staff_members").select("*").eq("user_id", auth.user.id).maybeSingle(),
   ]);
+  if (students.error) throw new Error(students.error.message);
+  if (staff.error) throw new Error(staff.error.message);
   return {
     student: (students.data ?? null) as Student | null,
     staff: (staff.data ?? null) as Staff | null,
