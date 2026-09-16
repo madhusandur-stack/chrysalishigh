@@ -184,3 +184,14 @@
   .aurora-blob { animation: none !important; }
   * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
+
+@media print {
+  @page { size: landscape; margin: 10mm; }
+  body { background: var(--paper); }
+  aside, nav, header, .print-hide { display: none !important; }
+  main { padding: 0 !important; }
+  .timetable-print-area { border: 0 !important; }
+  .timetable-grid > div:first-child { display: block !important; overflow: visible !important; }
+  .timetable-grid > div:last-child { display: none !important; }
+  .timetable-grid table { min-width: 0 !important; font-size: 9px !important; }
+}

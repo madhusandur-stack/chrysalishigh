@@ -1,20 +1,19 @@
-import { createFileRoute, Outlet, useNavigate, redirect } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { PortalShell } from "@/components/portal/shell";
-import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/_portal")({
   ssr: false,
   beforeLoad: async () => {
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) throw redirect({ to: "/" });
-    // Role gate: student/parent/system_admin can view student portal
+    const { data } = await supabase.auth.getSession();
+    const user = data.session?.user;
+    if (!user) throw redirect({ to: "/" });
+    // Role gate: student and system administrators can view the student portal.
     const { data: roles } = await supabase
       .from("user_roles")
       .select("role")
-      .eq("user_id", data.user.id);
-    const allowed = ["student", "parent", "system_admin"];
+      .eq("user_id", user.id);
+    const allowed = ["student", "system_admin"];
     const ok = (roles ?? []).some((r) => allowed.includes(r.role));
     if (!ok) {
       // Route them to the right portal if they're a teacher/admin
@@ -24,18 +23,12 @@ export const Route = createFileRoute("/_portal")({
       if (isAdmin) throw redirect({ to: "/staff-portal" });
       throw redirect({ to: "/" });
     }
-    return { userId: data.user.id };
+    return { userId: user.id };
   },
   component: PortalLayout,
 });
 
 function PortalLayout() {
-  const { session, loading } = useAuth();
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (!loading && !session) navigate({ to: "/" });
-  }, [loading, session, navigate]);
-
   return (
     <PortalShell>
       <Outlet />

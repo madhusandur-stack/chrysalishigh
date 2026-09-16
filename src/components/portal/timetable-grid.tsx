@@ -1,6 +1,22 @@
 import { DAYS, sortSlots, type TimetableSlot } from "@/lib/school-api";
-import { TableWrap, Td, Th } from "@/components/portal/ui-kit";
 import { cn } from "@/lib/utils";
+
+type GridColumn = {
+  key: string;
+  period_no: number;
+  start_time: string;
+  end_time: string;
+  is_break: boolean;
+  label: string;
+};
+
+function isBreak(slot: TimetableSlot) {
+  return Boolean(slot.is_break || /break|snack|lunch/i.test(slot.subject));
+}
+
+function columnKey(slot: TimetableSlot) {
+  return `${slot.start_time}-${slot.end_time}-${isBreak(slot) ? "break" : slot.period_no}`;
+}
 
 /** Read-only timetable rendering shared by the student view and editor preview. */
 export function TimetableGrid({
@@ -15,118 +31,111 @@ export function TimetableGrid({
 }) {
   const days = day ? [day] : (DAYS as readonly string[]);
   const ordered = sortSlots(slots);
+  const columns = Array.from(
+    ordered.reduce((map, slot) => {
+      const key = columnKey(slot);
+      if (!map.has(key)) {
+        map.set(key, {
+          key,
+          period_no: slot.period_no,
+          start_time: slot.start_time,
+          end_time: slot.end_time,
+          is_break: isBreak(slot),
+          label: slot.subject || "Break",
+        });
+      }
+      return map;
+    }, new Map<string, GridColumn>()).values(),
+  ).sort((a, b) => a.start_time.localeCompare(b.start_time) || a.period_no - b.period_no);
 
   return (
-    <div className="space-y-4">
-      {days.map((d) => {
-        const rows = ordered.filter((s) => s.day === d);
-        const periods = rows.filter((s) => !s.is_break);
-        const isToday = highlightDay === d;
-        return (
-          <div
-            key={d}
-            className={cn(
-              "overflow-hidden rounded-[16px] border bg-paper",
-              isToday ? "border-[color:var(--signal)]" : "border-line",
-            )}
-          >
-            <div className="flex items-center gap-2 border-b border-line px-4 py-2.5">
-              <span className="text-sm font-semibold">{d}</span>
-              {isToday && (
-                <span className="mono rounded-full bg-[color-mix(in_srgb,var(--signal)_14%,transparent)] px-2 py-0.5 text-[10px] uppercase tracking-wider text-[color:var(--signal)]">
-                  Today
-                </span>
-              )}
-              <span className="mono ml-auto text-[10px] uppercase tracking-wider text-[color:var(--ink-soft)]">
-                {periods.length} period{periods.length === 1 ? "" : "s"}
-              </span>
-            </div>
-
-            {rows.length ? (
-              <>
-                {/* Table on tablet and up */}
-                <div className="hidden sm:block">
-                  <TableWrap>
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr>
-                          <Th>Period</Th>
-                          <Th>Time</Th>
-                          <Th>Subject</Th>
-                          <Th>Teacher</Th>
-                          <Th>Room</Th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {rows.map((s) =>
-                          s.is_break ? (
-                            <tr key={s.id} className="bg-paper-2">
-                              <Td className="mono text-[color:var(--ink-soft)]">—</Td>
-                              <Td className="mono whitespace-nowrap text-[color:var(--ink-soft)]">
-                                {s.start_time} – {s.end_time}
-                              </Td>
-                              <Td className="font-medium uppercase tracking-wide text-[color:var(--ink-soft)]" colSpan={3}>
-                                {s.subject || "Break"}
-                              </Td>
-                            </tr>
-                          ) : (
-                            <tr key={s.id}>
-                              <Td className="mono">{s.period_no}</Td>
-                              <Td className="mono whitespace-nowrap">
-                                {s.start_time} – {s.end_time}
-                              </Td>
-                              <Td className="font-medium">{s.subject || "—"}</Td>
-                              <Td>{s.teacher || "—"}</Td>
-                              <Td>{s.room || "—"}</Td>
-                            </tr>
-                          ),
-                        )}
-                      </tbody>
-                    </table>
-                  </TableWrap>
-                </div>
-
-                {/* Stacked cards on phones */}
-                <ul className="divide-y divide-[color:var(--line)] sm:hidden">
-                  {rows.map((s) =>
-                    s.is_break ? (
-                      <li
-                        key={s.id}
-                        className="flex items-center justify-between gap-3 bg-paper-2 px-4 py-2.5 text-xs uppercase tracking-wide text-[color:var(--ink-soft)]"
-                      >
-                        <span className="font-medium">{s.subject || "Break"}</span>
-                        <span className="mono shrink-0">
-                          {s.start_time} – {s.end_time}
-                        </span>
-                      </li>
-                    ) : (
-                      <li key={s.id} className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 px-4 py-3">
-                        <span className="mono grid h-8 w-8 shrink-0 place-items-center rounded-full bg-paper-2 text-xs">
-                          {s.period_no}
-                        </span>
-                        <div className="min-w-0">
-                          <div className="flex items-baseline justify-between gap-2">
-                            <span className="truncate text-sm font-medium">{s.subject || "—"}</span>
-                            <span className="mono shrink-0 text-[11px] text-[color:var(--ink-soft)]">
-                              {s.start_time} – {s.end_time}
-                            </span>
+    <div className="timetable-grid">
+      <div className="hidden overflow-x-auto rounded-[16px] border border-line bg-paper md:block">
+        <table className="w-full min-w-[980px] table-fixed border-collapse text-center">
+          <thead>
+            <tr>
+              <th className="w-24 border-b border-r border-line bg-paper-2 px-3 py-4 text-sm font-semibold text-[color:var(--signal)]">Day</th>
+              {columns.map((column) => (
+                <th key={column.key} className={cn("border-b border-r border-line px-2 py-3 last:border-r-0", column.is_break ? "w-20 bg-paper-2" : "min-w-28 bg-paper-2")}>
+                  <div className="text-xs font-semibold">{column.is_break ? column.label : column.period_no}</div>
+                  <div className="mono mt-1 whitespace-nowrap text-[9px] font-normal text-[color:var(--ink-soft)]">{column.start_time} – {column.end_time}</div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {days.map((d) => {
+              const daySlots = ordered.filter((slot) => slot.day === d);
+              const isToday = highlightDay === d;
+              return (
+                <tr key={d} className={cn(isToday && "bg-[color:var(--signal-soft)]")}>
+                  <th scope="row" className="border-b border-r border-line px-3 py-5 text-sm font-semibold last:border-b-0">
+                    {d}
+                    {isToday && <span className="mono mt-1 block text-[8px] uppercase text-[color:var(--signal)]">Today</span>}
+                  </th>
+                  {columns.map((column) => {
+                    const slot = daySlots.find((item) => columnKey(item) === column.key);
+                    if (column.is_break) {
+                      return (
+                        <td key={column.key} className="border-b border-r border-line bg-paper-2/70 px-1 py-2 last:border-r-0">
+                          <span className="block rotate-180 text-[9px] font-semibold uppercase text-[color:var(--ink-soft)] [writing-mode:vertical-rl]">{slot?.subject || column.label}</span>
+                        </td>
+                      );
+                    }
+                    return (
+                      <td key={column.key} className="h-20 border-b border-r border-line px-2 py-3 align-middle last:border-r-0">
+                        {slot ? (
+                          <div className="mx-auto max-w-36">
+                            <div className="text-xs font-semibold leading-snug">{slot.subject || "—"}</div>
+                            <div className="mt-1 text-[9px] leading-snug text-[color:var(--ink-soft)]">{slot.teacher || "Teacher not assigned"}</div>
+                            {slot.room && <div className="mt-0.5 text-[8px] text-[color:var(--ink-soft)]">{slot.room}</div>}
                           </div>
-                          <div className="mt-0.5 truncate text-xs text-[color:var(--ink-soft)]">
-                            {s.teacher || "—"}
-                            {s.room ? ` · ${s.room}` : ""}
-                          </div>
+                        ) : <span className="text-[color:var(--ink-soft)]">—</span>}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="space-y-3 md:hidden">
+        {days.map((d) => {
+          const rows = ordered.filter((slot) => slot.day === d);
+          const isToday = highlightDay === d;
+          return (
+            <section key={d} className={cn("overflow-hidden rounded-[16px] border bg-paper", isToday ? "border-[color:var(--signal)]" : "border-line")}>
+              <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center border-b border-line px-4 py-3">
+                <h3 className="truncate text-sm font-semibold">{d}</h3>
+                <span className="mono text-[9px] uppercase text-[color:var(--ink-soft)]">{isToday ? "Today" : `${rows.filter((s) => !isBreak(s)).length} periods`}</span>
+              </header>
+              {rows.length ? (
+                <ul className="divide-y divide-[color:var(--line)]">
+                  {rows.map((slot) => isBreak(slot) ? (
+                    <li key={slot.id} className="flex items-center justify-between gap-3 bg-paper-2 px-4 py-2.5 text-xs text-[color:var(--ink-soft)]">
+                      <span className="font-semibold uppercase">{slot.subject || "Break"}</span>
+                      <span className="mono shrink-0 text-[10px]">{slot.start_time} – {slot.end_time}</span>
+                    </li>
+                  ) : (
+                    <li key={slot.id} className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 px-4 py-3">
+                      <span className="mono grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[color:var(--signal-soft)] text-xs text-[color:var(--signal)]">{slot.period_no}</span>
+                      <div className="min-w-0">
+                        <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
+                          <span className="truncate text-sm font-semibold">{slot.subject || "—"}</span>
+                          <span className="mono shrink-0 text-[10px] text-[color:var(--ink-soft)]">{slot.start_time} – {slot.end_time}</span>
                         </div>
-                      </li>
-                    ),
-                  )}
+                        <p className="mt-0.5 truncate text-xs text-[color:var(--ink-soft)]">{slot.teacher || "Teacher not assigned"}{slot.room ? ` · ${slot.room}` : ""}</p>
+                      </div>
+                    </li>
+                  ))}
                 </ul>
-              </>
-            ) : (
-              <div className="px-4 py-6 text-sm text-[color:var(--ink-soft)]">No periods scheduled.</div>
-            )}
-          </div>
-        );
-      })}
+              ) : <p className="px-4 py-6 text-sm text-[color:var(--ink-soft)]">No periods scheduled.</p>}
+            </section>
+          );
+        })}
+      </div>
     </div>
   );
 }
