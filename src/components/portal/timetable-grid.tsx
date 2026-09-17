@@ -1,4 +1,4 @@
-import { DAYS, sortSlots, type TimetableSlot } from "@/lib/school-api";
+import { sortSlots, timetableDays, type TimetableSlot } from "@/lib/school-api";
 import { cn } from "@/lib/utils";
 
 type GridColumn = {
@@ -29,8 +29,8 @@ export function TimetableGrid({
   /** When set, only this day is rendered. */
   day?: string;
 }) {
-  const days = day ? [day] : (DAYS as readonly string[]);
   const ordered = sortSlots(slots);
+  const days = day ? [day] : timetableDays(ordered);
   const columns = Array.from(
     ordered.reduce((map, slot) => {
       const key = columnKey(slot);
@@ -57,7 +57,7 @@ export function TimetableGrid({
               <th className="w-24 border-b border-r border-line bg-paper-2 px-3 py-4 text-sm font-semibold text-[color:var(--signal)]">Day</th>
               {columns.map((column) => (
                 <th key={column.key} className={cn("border-b border-r border-line px-2 py-3 last:border-r-0", column.is_break ? "w-20 bg-paper-2" : "min-w-28 bg-paper-2")}>
-                  <div className="text-xs font-semibold">{column.is_break ? column.label : column.period_no}</div>
+                  <div className="text-xs font-semibold">{column.is_break ? "Break" : `Period ${column.period_no}`}</div>
                   <div className="mono mt-1 whitespace-nowrap text-[9px] font-normal text-[color:var(--ink-soft)]">{column.start_time} – {column.end_time}</div>
                 </th>
               ))}
@@ -67,6 +67,7 @@ export function TimetableGrid({
             {days.map((d) => {
               const daySlots = ordered.filter((slot) => slot.day === d);
               const isToday = highlightDay === d;
+              const firstDay = days[0] === d;
               return (
                 <tr key={d} className={cn(isToday && "bg-[color:var(--signal-soft)]")}>
                   <th scope="row" className="border-b border-r border-line px-3 py-5 text-sm font-semibold last:border-b-0">
@@ -76,9 +77,16 @@ export function TimetableGrid({
                   {columns.map((column) => {
                     const slot = daySlots.find((item) => columnKey(item) === column.key);
                     if (column.is_break) {
+                      if (!firstDay) return null;
                       return (
-                        <td key={column.key} className="border-b border-r border-line bg-paper-2/70 px-1 py-2 last:border-r-0">
-                          <span className="block rotate-180 text-[9px] font-semibold uppercase text-[color:var(--ink-soft)] [writing-mode:vertical-rl]">{slot?.subject || column.label}</span>
+                        <td
+                          key={column.key}
+                          rowSpan={days.length}
+                          className="border-b border-r border-line bg-paper-2/70 px-1 py-3 align-middle last:border-r-0"
+                        >
+                          <span className="mx-auto block whitespace-nowrap text-[9px] font-semibold uppercase text-[color:var(--ink-soft)] [writing-mode:vertical-rl] rotate-180">
+                            {slot?.subject || column.label}
+                          </span>
                         </td>
                       );
                     }
