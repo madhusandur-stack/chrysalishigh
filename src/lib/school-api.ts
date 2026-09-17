@@ -81,7 +81,15 @@ export type Student = {
   mother_email: string | null;
   mother_occupation: string | null;
   address: string | null;
+  photo_url: string | null;
   is_portal_demo: boolean;
+  classes?: {
+    id: string;
+    grade: string;
+    section: string;
+    subject: string | null;
+    campuses: { id: string; name: string; slug: string } | null;
+  } | null;
 };
 
 export async function listStudents(): Promise<Student[]> {
@@ -120,7 +128,11 @@ export async function getMyIdentity() {
   if (!auth.user) throw new Error("Your session has expired. Please sign in again.");
 
   const [students, staff] = await Promise.all([
-    supabase.from("students").select("*").eq("user_id", auth.user.id).maybeSingle(),
+    supabase
+      .from("students")
+      .select("*, classes(id, grade, section, subject, campuses(id, name, slug))")
+      .eq("user_id", auth.user.id)
+      .maybeSingle(),
     supabase.from("staff_members").select("*").eq("user_id", auth.user.id).maybeSingle(),
   ]);
   if (students.error) throw new Error(students.error.message);
@@ -724,9 +736,15 @@ export type TimetableSlot = {
   subject: string;
   teacher: string;
   room: string;
-  /** Break rows (Snacks / Lunch) render full-width and have no teacher. */
+  /** Break slots become vertical columns shared across all enabled days. */
   is_break?: boolean;
 };
+
+/** Saturday is enabled by publishing at least one Saturday slot. */
+export function timetableDays(slots: TimetableSlot[]) {
+  const hasSaturday = slots.some((slot) => slot.day === "Sat");
+  return DAYS.filter((day) => day !== "Sat" || hasSaturday);
+}
 
 export type Timetable = {
   id: string;

@@ -37,6 +37,11 @@ function StudentTimetable() {
   const meQ = useQuery({ queryKey: qk.mine, queryFn: getMyIdentity, staleTime: 300_000 });
   const student = meQ.data?.student ?? null;
   const classId = student?.class_id ?? "";
+  const classLabel = student?.classes
+    ? `${student.classes.grade} – ${student.classes.section}`
+    : classId
+      ? "Assigned class"
+      : "Not linked";
 
   const ttQ = useQuery({
     queryKey: qk.timetable(classId, ACADEMIC_YEAR),
@@ -84,7 +89,7 @@ function StudentTimetable() {
       <div className="print-hide mb-5 grid gap-3 sm:grid-cols-[minmax(0,240px)_minmax(0,200px)_1fr] sm:items-end">
         <label className="block">
           <span className="mb-1.5 block text-xs font-medium text-[color:var(--ink-soft)]">Class / Section</span>
-          <Select value={classId} disabled><option value={classId}>{classId ? "Your assigned class" : "Not linked"}</option></Select>
+          <Select value={classId} disabled><option value={classId}>{classLabel}</option></Select>
         </label>
         <label className="block">
           <span className="mb-1.5 block text-xs font-medium text-[color:var(--ink-soft)]">Day</span>
