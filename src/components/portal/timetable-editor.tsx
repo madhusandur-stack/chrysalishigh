@@ -70,6 +70,7 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
   const [dirty, setDirty] = useState(false);
   const [preview, setPreview] = useState(false);
   const [copyTo, setCopyTo] = useState<string>("");
+  const [saturdayEnabled, setSaturdayEnabled] = useState(false);
 
   const classesQ = useQuery({ queryKey: qk.classes, queryFn: listClasses, staleTime: 300_000 });
   const staffQ = useQuery({ queryKey: qk.staff, queryFn: listStaff, staleTime: 300_000 });
