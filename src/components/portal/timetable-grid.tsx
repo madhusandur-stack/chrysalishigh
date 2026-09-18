@@ -80,7 +80,9 @@ export function TimetableGrid({
                     {isToday && <span className="mono mt-1 block text-[8px] uppercase text-[color:var(--signal)]">Today</span>}
                   </th>
                   {columns.map((column) => {
-                    const slot = daySlots.find((item) => columnKey(item) === column.key);
+                    const slot = column.is_break
+                      ? ordered.find((item) => columnKey(item) === column.key)
+                      : daySlots.find((item) => columnKey(item) === column.key);
                     if (column.is_break) {
                       if (!firstDay) return null;
                       return (
