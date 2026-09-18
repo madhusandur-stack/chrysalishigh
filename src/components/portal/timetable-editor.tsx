@@ -354,7 +354,7 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
                 aria-label="Copy this day to"
               >
                 <option value="">Copy {day} to…</option>
-                {DAYS.filter((d) => d !== day).map((d) => (
+                {activeDays.filter((d) => d !== day).map((d) => (
                   <option key={d} value={d}>
                     {d}
                   </option>
