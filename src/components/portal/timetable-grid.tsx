@@ -143,7 +143,7 @@ export function TimetableGrid({
                           <span className="truncate text-sm font-semibold">{slot.subject || "—"}</span>
                           <span className="mono shrink-0 text-[10px] text-[color:var(--ink-soft)]">{slot.start_time} – {slot.end_time}</span>
                         </div>
-                        <p className="mt-0.5 truncate text-xs text-[color:var(--ink-soft)]">{slot.teacher || "Teacher not assigned"}{slot.room ? ` · ${slot.room}` : ""}</p>
+                        <p className="mt-0.5 truncate text-xs text-[color:var(--ink-soft)]">{slot.teacher || "Teacher not assigned"}</p>
                       </div>
                     </li>
                   ))}
