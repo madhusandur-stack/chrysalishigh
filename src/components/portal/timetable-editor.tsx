@@ -157,7 +157,7 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
   function copyDay(target: string) {
     if (!target || target === day) return;
     const copied = daySlots.map((s) => ({ ...s, id: uid(), day: target }));
-    setSlots((prev) => [...prev.filter((s) => s.day !== target), ...copied]);
+    setSlots((prev) => [...prev.filter((s) => s.is_break || s.day !== target), ...copied]);
     setDirty(true);
     toast.success(`Copied ${day} → ${target}`);
   }
