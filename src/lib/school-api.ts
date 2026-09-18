@@ -792,12 +792,14 @@ export async function saveTimetableDraft(input: {
   classId: string;
   academicYear?: string;
   slots: TimetableSlot[];
+  settings?: TimetableSettings;
   editorName: string;
 }) {
   const row = {
     class_id: input.classId,
     academic_year: input.academicYear ?? ACADEMIC_YEAR,
     draft_slots: input.slots as never,
+    settings: (input.settings ?? {}) as never,
     status: "draft",
     updated_by_name: input.editorName,
     updated_at: new Date().toISOString(),
