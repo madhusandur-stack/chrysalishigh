@@ -1,4 +1,4 @@
-import { sortSlots, timetableDays, type TimetableSlot } from "@/lib/school-api";
+import { sortSlots, timetableDays, type TimetableSettings, type TimetableSlot } from "@/lib/school-api";
 import { cn } from "@/lib/utils";
 
 type GridColumn = {
@@ -23,14 +23,19 @@ export function TimetableGrid({
   slots,
   highlightDay,
   day,
+  settings,
 }: {
   slots: TimetableSlot[];
   highlightDay?: string;
   /** When set, only this day is rendered. */
   day?: string;
+  /** Class-level timetable settings, e.g. whether Saturday is enabled. */
+  settings?: TimetableSettings | null;
 }) {
-  const ordered = sortSlots(slots);
-  const days = day ? [day] : timetableDays(ordered);
+  const all = sortSlots(slots);
+  const days = day ? [day] : timetableDays(all, settings);
+  // Breaks are shared columns; ordinary periods only show for rendered days.
+  const ordered = all.filter((slot) => isBreak(slot) || days.includes(slot.day));
   const columns = Array.from(
     ordered.reduce((map, slot) => {
       const key = columnKey(slot);
@@ -75,7 +80,9 @@ export function TimetableGrid({
                     {isToday && <span className="mono mt-1 block text-[8px] uppercase text-[color:var(--signal)]">Today</span>}
                   </th>
                   {columns.map((column) => {
-                    const slot = daySlots.find((item) => columnKey(item) === column.key);
+                    const slot = column.is_break
+                      ? ordered.find((item) => columnKey(item) === column.key)
+                      : daySlots.find((item) => columnKey(item) === column.key);
                     if (column.is_break) {
                       if (!firstDay) return null;
                       return (
@@ -96,7 +103,6 @@ export function TimetableGrid({
                           <div className="mx-auto max-w-36">
                             <div className="text-xs font-semibold leading-snug">{slot.subject || "—"}</div>
                             <div className="mt-1 text-[9px] leading-snug text-[color:var(--ink-soft)]">{slot.teacher || "Teacher not assigned"}</div>
-                            {slot.room && <div className="mt-0.5 text-[8px] text-[color:var(--ink-soft)]">{slot.room}</div>}
                           </div>
                         ) : <span className="text-[color:var(--ink-soft)]">—</span>}
                       </td>
@@ -111,7 +117,10 @@ export function TimetableGrid({
 
       <div className="space-y-3 md:hidden">
         {days.map((d) => {
-          const rows = ordered.filter((slot) => slot.day === d);
+          const breaks = ordered.filter((slot) => isBreak(slot));
+          const rows = [...ordered.filter((slot) => !isBreak(slot) && slot.day === d), ...breaks.map((b) => ({ ...b, day: d }))].sort(
+            (a, b) => a.start_time.localeCompare(b.start_time),
+          );
           const isToday = highlightDay === d;
           return (
             <section key={d} className={cn("overflow-hidden rounded-[16px] border bg-paper", isToday ? "border-[color:var(--signal)]" : "border-line")}>
@@ -134,7 +143,7 @@ export function TimetableGrid({
                           <span className="truncate text-sm font-semibold">{slot.subject || "—"}</span>
                           <span className="mono shrink-0 text-[10px] text-[color:var(--ink-soft)]">{slot.start_time} – {slot.end_time}</span>
                         </div>
-                        <p className="mt-0.5 truncate text-xs text-[color:var(--ink-soft)]">{slot.teacher || "Teacher not assigned"}{slot.room ? ` · ${slot.room}` : ""}</p>
+                        <p className="mt-0.5 truncate text-xs text-[color:var(--ink-soft)]">{slot.teacher || "Teacher not assigned"}</p>
                       </div>
                     </li>
                   ))}

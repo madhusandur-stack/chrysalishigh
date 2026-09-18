@@ -133,7 +133,12 @@ function StudentTimetable() {
             <p className="mt-1 text-sm">{student.full_name} · Academic year {ACADEMIC_YEAR}</p>
           </div>
           <div className="p-3 sm:p-4">
-            <TimetableGrid slots={slots} highlightDay={todayDay()} {...(day !== "all" ? { day } : {})} />
+            <TimetableGrid
+              slots={slots}
+              highlightDay={todayDay()}
+              settings={ttQ.data?.settings ?? null}
+              {...(day !== "all" ? { day } : {})}
+            />
           </div>
           <footer className="flex items-center gap-2 border-t border-line px-4 py-3 text-xs text-[color:var(--ink-soft)] sm:px-5">
             <CalendarClock className="h-4 w-4 shrink-0 text-[color:var(--signal)]" />

@@ -70,6 +70,7 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
   const [dirty, setDirty] = useState(false);
   const [preview, setPreview] = useState(false);
   const [copyTo, setCopyTo] = useState<string>("");
+  const [saturdayEnabled, setSaturdayEnabled] = useState(false);
 
   const classesQ = useQuery({ queryKey: qk.classes, queryFn: listClasses, staleTime: 300_000 });
   const staffQ = useQuery({ queryKey: qk.staff, queryFn: listStaff, staleTime: 300_000 });
@@ -87,14 +88,44 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
   });
 
   useEffect(() => {
-    setSlots(sortSlots(ttQ.data?.draft_slots ?? []));
+    const loaded = sortSlots(ttQ.data?.draft_slots ?? []);
+    setSlots(loaded);
+    setSaturdayEnabled(
+      ttQ.data?.settings?.saturday_enabled ?? loaded.some((s) => s.day === "Sat" && !s.is_break),
+    );
     setDirty(false);
   }, [ttQ.data]);
 
+  const activeDays = useMemo(() => DAYS.filter((d) => d !== "Sat" || saturdayEnabled), [saturdayEnabled]);
+
+  useEffect(() => {
+    if (!(activeDays as readonly string[]).includes(day)) setDay(activeDays[0] ?? "Mon");
+  }, [activeDays, day]);
+
+  const breaks = useMemo(() => slots.filter((s) => s.is_break), [slots]);
+
   const daySlots = useMemo(
-    () => slots.filter((s) => s.day === day).sort((a, b) => a.period_no - b.period_no),
+    () => slots.filter((s) => s.day === day && !s.is_break).sort((a, b) => a.period_no - b.period_no),
     [slots, day],
   );
+
+  function addBreak() {
+    setSlots((prev) => [
+      ...prev,
+      {
+        id: uid(),
+        day: "Mon",
+        period_no: 0,
+        start_time: "13:00",
+        end_time: "13:40",
+        subject: "Lunch Break",
+        teacher: "",
+        room: "",
+        is_break: true,
+      },
+    ]);
+    setDirty(true);
+  }
 
   function update(id: string, patch: Partial<TimetableSlot>) {
     setSlots((prev) => prev.map((s) => (s.id === id ? { ...s, ...patch } : s)));
@@ -126,13 +157,15 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
   function copyDay(target: string) {
     if (!target || target === day) return;
     const copied = daySlots.map((s) => ({ ...s, id: uid(), day: target }));
-    setSlots((prev) => [...prev.filter((s) => s.day !== target), ...copied]);
+    setSlots((prev) => [...prev.filter((s) => s.is_break || s.day !== target), ...copied]);
     setDirty(true);
     toast.success(`Copied ${day} → ${target}`);
   }
 
+  const settings = { saturday_enabled: saturdayEnabled };
+
   const saveDraft = useMutation({
-    mutationFn: () => saveTimetableDraft({ classId, academicYear: year, slots: sortSlots(slots), editorName }),
+    mutationFn: () => saveTimetableDraft({ classId, academicYear: year, slots: sortSlots(slots), settings, editorName }),
     onSuccess: () => {
       toast.success("Draft saved");
       setDirty(false);
@@ -142,7 +175,7 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
   });
 
   const publish = useMutation({
-    mutationFn: () => publishTimetable({ classId, academicYear: year, slots: sortSlots(slots), editorName }),
+    mutationFn: () => publishTimetable({ classId, academicYear: year, slots: sortSlots(slots), settings, editorName }),
     onSuccess: () => {
       toast.success("Published — students now see this timetable");
       setDirty(false);
@@ -182,7 +215,7 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
         </Field>
         <Field label="Day">
           <Select value={day} onChange={(e) => setDay(e.target.value)}>
-            {DAYS.map((d) => (
+            {activeDays.map((d) => (
               <option key={d} value={d}>
                 {d}
               </option>
@@ -190,6 +223,70 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
           </Select>
         </Field>
       </div>
+
+      {/* Saturday + breaks */}
+      <div className="space-y-4 rounded-[18px] border border-line bg-paper p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="text-sm font-semibold">Week &amp; breaks</div>
+            <p className="text-xs text-[color:var(--ink-soft)]">
+              Breaks show as vertical columns across every day of the timetable.
+            </p>
+          </div>
+          <label className="flex cursor-pointer items-center gap-2 text-xs font-medium">
+            <input
+              type="checkbox"
+              checked={saturdayEnabled}
+              onChange={(e) => {
+                setSaturdayEnabled(e.target.checked);
+                setDirty(true);
+              }}
+              className="h-4 w-4 accent-[color:var(--signal)]"
+            />
+            Saturday enabled
+          </label>
+        </div>
+
+        <div className="space-y-2">
+          {breaks.map((b) => (
+            <div key={b.id} className="grid gap-3 rounded-[14px] border border-line bg-paper-2 p-3 md:grid-cols-12">
+              <div className="md:col-span-5">
+                <Field label="Break name">
+                  <TextInput
+                    value={b.subject}
+                    onChange={(e) => update(b.id, { subject: e.target.value })}
+                    placeholder="Lunch Break"
+                  />
+                </Field>
+              </div>
+              <div className="md:col-span-3">
+                <Field label="Start">
+                  <TextInput type="time" value={b.start_time} onChange={(e) => update(b.id, { start_time: e.target.value })} />
+                </Field>
+              </div>
+              <div className="md:col-span-3">
+                <Field label="End">
+                  <TextInput type="time" value={b.end_time} onChange={(e) => update(b.id, { end_time: e.target.value })} />
+                </Field>
+              </div>
+              <div className="flex items-end justify-end md:col-span-1">
+                <IconBtn label="Remove break" onClick={() => removeSlot(b.id)}>
+                  <Trash2 className="h-4 w-4" />
+                </IconBtn>
+              </div>
+            </div>
+          ))}
+          {!breaks.length && (
+            <p className="rounded-[14px] border border-dashed border-line px-4 py-3 text-xs text-[color:var(--ink-soft)]">
+              No breaks yet — add a snack or lunch break.
+            </p>
+          )}
+          <GhostButton onClick={addBreak}>
+            <Plus className="h-4 w-4" /> Add break
+          </GhostButton>
+        </div>
+      </div>
+
 
       {/* Status bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-[18px] border border-line bg-paper px-4 py-3">
@@ -225,13 +322,13 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
       ) : preview ? (
         <div className="rounded-[18px] border border-line bg-paper p-5">
           <div className="mb-3 text-sm font-semibold">Preview — what students will see once published</div>
-          <TimetableGrid slots={slots} highlightDay={todayDay()} />
+          <TimetableGrid slots={slots} highlightDay={todayDay()} settings={settings} />
         </div>
       ) : (
         <div className="space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex flex-wrap gap-1.5">
-              {DAYS.map((d) => (
+              {activeDays.map((d) => (
                 <button
                   key={d}
                   onClick={() => setDay(d)}
@@ -244,7 +341,7 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
                 >
                   {d}
                   <span className="mono ml-1.5 opacity-70">
-                    {slots.filter((s) => s.day === d).length}
+                    {slots.filter((s) => s.day === d && !s.is_break).length}
                   </span>
                 </button>
               ))}
@@ -257,7 +354,7 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
                 aria-label="Copy this day to"
               >
                 <option value="">Copy {day} to…</option>
-                {DAYS.filter((d) => d !== day).map((d) => (
+                {activeDays.filter((d) => d !== day).map((d) => (
                   <option key={d} value={d}>
                     {d}
                   </option>

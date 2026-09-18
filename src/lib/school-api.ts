@@ -740,9 +740,15 @@ export type TimetableSlot = {
   is_break?: boolean;
 };
 
-/** Saturday is enabled by publishing at least one Saturday slot. */
-export function timetableDays(slots: TimetableSlot[]) {
-  const hasSaturday = slots.some((slot) => slot.day === "Sat");
+export type TimetableSettings = {
+  /** Saturday only appears when staff switch it on for the class. */
+  saturday_enabled?: boolean;
+};
+
+/** Saturday shows when staff enabled it, or when Saturday periods exist. */
+export function timetableDays(slots: TimetableSlot[], settings?: TimetableSettings | null) {
+  const hasSaturday =
+    settings?.saturday_enabled ?? slots.some((slot) => slot.day === "Sat" && !slot.is_break);
   return DAYS.filter((day) => day !== "Sat" || hasSaturday);
 }
 
@@ -757,6 +763,7 @@ export type Timetable = {
   published_by_name: string | null;
   published_at: string | null;
   updated_at: string;
+  settings: TimetableSettings;
 };
 
 function normaliseTimetable(row: Record<string, unknown> | null): Timetable | null {
@@ -765,6 +772,7 @@ function normaliseTimetable(row: Record<string, unknown> | null): Timetable | nu
     ...(row as unknown as Timetable),
     draft_slots: (row['draft_slots'] as TimetableSlot[]) ?? [],
     published_slots: (row['published_slots'] as TimetableSlot[]) ?? [],
+    settings: (row['settings'] as TimetableSettings) ?? {},
   };
 }
 
@@ -784,12 +792,14 @@ export async function saveTimetableDraft(input: {
   classId: string;
   academicYear?: string;
   slots: TimetableSlot[];
+  settings?: TimetableSettings;
   editorName: string;
 }) {
   const row = {
     class_id: input.classId,
     academic_year: input.academicYear ?? ACADEMIC_YEAR,
     draft_slots: input.slots as never,
+    settings: (input.settings ?? {}) as never,
     status: "draft",
     updated_by_name: input.editorName,
     updated_at: new Date().toISOString(),
@@ -804,6 +814,7 @@ export async function publishTimetable(input: {
   classId: string;
   academicYear?: string;
   slots: TimetableSlot[];
+  settings?: TimetableSettings;
   editorName: string;
 }) {
   const now = new Date().toISOString();
@@ -812,6 +823,7 @@ export async function publishTimetable(input: {
     academic_year: input.academicYear ?? ACADEMIC_YEAR,
     draft_slots: input.slots as never,
     published_slots: input.slots as never,
+    settings: (input.settings ?? {}) as never,
     status: "published",
     updated_by_name: input.editorName,
     published_by_name: input.editorName,
