@@ -322,7 +322,7 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
       ) : preview ? (
         <div className="rounded-[18px] border border-line bg-paper p-5">
           <div className="mb-3 text-sm font-semibold">Preview — what students will see once published</div>
-          <TimetableGrid slots={slots} highlightDay={todayDay()} />
+          <TimetableGrid slots={slots} highlightDay={todayDay()} settings={settings} />
         </div>
       ) : (
         <div className="space-y-3">
