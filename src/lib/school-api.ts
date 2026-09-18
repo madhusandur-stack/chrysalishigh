@@ -814,6 +814,7 @@ export async function publishTimetable(input: {
   classId: string;
   academicYear?: string;
   slots: TimetableSlot[];
+  settings?: TimetableSettings;
   editorName: string;
 }) {
   const now = new Date().toISOString();
@@ -822,6 +823,7 @@ export async function publishTimetable(input: {
     academic_year: input.academicYear ?? ACADEMIC_YEAR,
     draft_slots: input.slots as never,
     published_slots: input.slots as never,
+    settings: (input.settings ?? {}) as never,
     status: "published",
     updated_by_name: input.editorName,
     published_by_name: input.editorName,
