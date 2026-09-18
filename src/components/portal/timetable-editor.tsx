@@ -162,8 +162,10 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
     toast.success(`Copied ${day} → ${target}`);
   }
 
+  const settings = { saturday_enabled: saturdayEnabled };
+
   const saveDraft = useMutation({
-    mutationFn: () => saveTimetableDraft({ classId, academicYear: year, slots: sortSlots(slots), editorName }),
+    mutationFn: () => saveTimetableDraft({ classId, academicYear: year, slots: sortSlots(slots), settings, editorName }),
     onSuccess: () => {
       toast.success("Draft saved");
       setDirty(false);
