@@ -328,7 +328,7 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
         <div className="space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex flex-wrap gap-1.5">
-              {DAYS.map((d) => (
+              {activeDays.map((d) => (
                 <button
                   key={d}
                   onClick={() => setDay(d)}
