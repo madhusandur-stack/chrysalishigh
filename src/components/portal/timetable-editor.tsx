@@ -341,7 +341,7 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
                 >
                   {d}
                   <span className="mono ml-1.5 opacity-70">
-                    {slots.filter((s) => s.day === d).length}
+                    {slots.filter((s) => s.day === d && !s.is_break).length}
                   </span>
                 </button>
               ))}
