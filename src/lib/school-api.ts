@@ -740,9 +740,15 @@ export type TimetableSlot = {
   is_break?: boolean;
 };
 
-/** Saturday is enabled by publishing at least one Saturday slot. */
-export function timetableDays(slots: TimetableSlot[]) {
-  const hasSaturday = slots.some((slot) => slot.day === "Sat");
+export type TimetableSettings = {
+  /** Saturday only appears when staff switch it on for the class. */
+  saturday_enabled?: boolean;
+};
+
+/** Saturday shows when staff enabled it, or when Saturday periods exist. */
+export function timetableDays(slots: TimetableSlot[], settings?: TimetableSettings | null) {
+  const hasSaturday =
+    settings?.saturday_enabled ?? slots.some((slot) => slot.day === "Sat" && !slot.is_break);
   return DAYS.filter((day) => day !== "Sat" || hasSaturday);
 }
 
