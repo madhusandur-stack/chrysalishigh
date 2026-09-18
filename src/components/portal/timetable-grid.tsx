@@ -23,14 +23,17 @@ export function TimetableGrid({
   slots,
   highlightDay,
   day,
+  settings,
 }: {
   slots: TimetableSlot[];
   highlightDay?: string;
   /** When set, only this day is rendered. */
   day?: string;
+  /** Class-level timetable settings, e.g. whether Saturday is enabled. */
+  settings?: TimetableSettings | null;
 }) {
   const ordered = sortSlots(slots);
-  const days = day ? [day] : timetableDays(ordered);
+  const days = day ? [day] : timetableDays(ordered, settings);
   const columns = Array.from(
     ordered.reduce((map, slot) => {
       const key = columnKey(slot);
