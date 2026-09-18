@@ -175,7 +175,7 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
   });
 
   const publish = useMutation({
-    mutationFn: () => publishTimetable({ classId, academicYear: year, slots: sortSlots(slots), editorName }),
+    mutationFn: () => publishTimetable({ classId, academicYear: year, slots: sortSlots(slots), settings, editorName }),
     onSuccess: () => {
       toast.success("Published — students now see this timetable");
       setDirty(false);
