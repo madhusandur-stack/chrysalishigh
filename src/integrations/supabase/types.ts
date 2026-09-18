@@ -1171,6 +1171,7 @@ export type Database = {
           published_at: string | null
           published_by_name: string | null
           published_slots: Json
+          settings: Json
           status: string
           updated_at: string
           updated_by: string | null
@@ -1185,6 +1186,7 @@ export type Database = {
           published_at?: string | null
           published_by_name?: string | null
           published_slots?: Json
+          settings?: Json
           status?: string
           updated_at?: string
           updated_by?: string | null
@@ -1199,6 +1201,7 @@ export type Database = {
           published_at?: string | null
           published_by_name?: string | null
           published_slots?: Json
+          settings?: Json
           status?: string
           updated_at?: string
           updated_by?: string | null
