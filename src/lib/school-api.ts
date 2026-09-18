@@ -763,6 +763,7 @@ export type Timetable = {
   published_by_name: string | null;
   published_at: string | null;
   updated_at: string;
+  settings: TimetableSettings;
 };
 
 function normaliseTimetable(row: Record<string, unknown> | null): Timetable | null {
@@ -771,6 +772,7 @@ function normaliseTimetable(row: Record<string, unknown> | null): Timetable | nu
     ...(row as unknown as Timetable),
     draft_slots: (row['draft_slots'] as TimetableSlot[]) ?? [],
     published_slots: (row['published_slots'] as TimetableSlot[]) ?? [],
+    settings: (row['settings'] as TimetableSettings) ?? {},
   };
 }
 
