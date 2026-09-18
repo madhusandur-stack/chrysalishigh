@@ -1,4 +1,4 @@
-import { sortSlots, timetableDays, type TimetableSlot } from "@/lib/school-api";
+import { sortSlots, timetableDays, type TimetableSettings, type TimetableSlot } from "@/lib/school-api";
 import { cn } from "@/lib/utils";
 
 type GridColumn = {
