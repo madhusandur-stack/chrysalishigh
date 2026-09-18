@@ -215,7 +215,7 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
         </Field>
         <Field label="Day">
           <Select value={day} onChange={(e) => setDay(e.target.value)}>
-            {DAYS.map((d) => (
+            {activeDays.map((d) => (
               <option key={d} value={d}>
                 {d}
               </option>
@@ -223,6 +223,70 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
           </Select>
         </Field>
       </div>
+
+      {/* Saturday + breaks */}
+      <div className="space-y-4 rounded-[18px] border border-line bg-paper p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="text-sm font-semibold">Week &amp; breaks</div>
+            <p className="text-xs text-[color:var(--ink-soft)]">
+              Breaks show as vertical columns across every day of the timetable.
+            </p>
+          </div>
+          <label className="flex cursor-pointer items-center gap-2 text-xs font-medium">
+            <input
+              type="checkbox"
+              checked={saturdayEnabled}
+              onChange={(e) => {
+                setSaturdayEnabled(e.target.checked);
+                setDirty(true);
+              }}
+              className="h-4 w-4 accent-[color:var(--signal)]"
+            />
+            Saturday enabled
+          </label>
+        </div>
+
+        <div className="space-y-2">
+          {breaks.map((b) => (
+            <div key={b.id} className="grid gap-3 rounded-[14px] border border-line bg-paper-2 p-3 md:grid-cols-12">
+              <div className="md:col-span-5">
+                <Field label="Break name">
+                  <TextInput
+                    value={b.subject}
+                    onChange={(e) => update(b.id, { subject: e.target.value })}
+                    placeholder="Lunch Break"
+                  />
+                </Field>
+              </div>
+              <div className="md:col-span-3">
+                <Field label="Start">
+                  <TextInput type="time" value={b.start_time} onChange={(e) => update(b.id, { start_time: e.target.value })} />
+                </Field>
+              </div>
+              <div className="md:col-span-3">
+                <Field label="End">
+                  <TextInput type="time" value={b.end_time} onChange={(e) => update(b.id, { end_time: e.target.value })} />
+                </Field>
+              </div>
+              <div className="flex items-end justify-end md:col-span-1">
+                <IconBtn label="Remove break" onClick={() => removeSlot(b.id)}>
+                  <Trash2 className="h-4 w-4" />
+                </IconBtn>
+              </div>
+            </div>
+          ))}
+          {!breaks.length && (
+            <p className="rounded-[14px] border border-dashed border-line px-4 py-3 text-xs text-[color:var(--ink-soft)]">
+              No breaks yet — add a snack or lunch break.
+            </p>
+          )}
+          <GhostButton onClick={addBreak}>
+            <Plus className="h-4 w-4" /> Add break
+          </GhostButton>
+        </div>
+      </div>
+
 
       {/* Status bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-[18px] border border-line bg-paper px-4 py-3">
