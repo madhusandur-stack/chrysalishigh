@@ -103,7 +103,6 @@ export function TimetableGrid({
                           <div className="mx-auto max-w-36">
                             <div className="text-xs font-semibold leading-snug">{slot.subject || "—"}</div>
                             <div className="mt-1 text-[9px] leading-snug text-[color:var(--ink-soft)]">{slot.teacher || "Teacher not assigned"}</div>
-                            {slot.room && <div className="mt-0.5 text-[8px] text-[color:var(--ink-soft)]">{slot.room}</div>}
                           </div>
                         ) : <span className="text-[color:var(--ink-soft)]">—</span>}
                       </td>
