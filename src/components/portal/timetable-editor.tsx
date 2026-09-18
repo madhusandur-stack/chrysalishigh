@@ -88,14 +88,44 @@ export function TimetableEditor({ editorName }: { editorName: string }) {
   });
 
   useEffect(() => {
-    setSlots(sortSlots(ttQ.data?.draft_slots ?? []));
+    const loaded = sortSlots(ttQ.data?.draft_slots ?? []);
+    setSlots(loaded);
+    setSaturdayEnabled(
+      ttQ.data?.settings?.saturday_enabled ?? loaded.some((s) => s.day === "Sat" && !s.is_break),
+    );
     setDirty(false);
   }, [ttQ.data]);
 
+  const activeDays = useMemo(() => DAYS.filter((d) => d !== "Sat" || saturdayEnabled), [saturdayEnabled]);
+
+  useEffect(() => {
+    if (!(activeDays as readonly string[]).includes(day)) setDay(activeDays[0] ?? "Mon");
+  }, [activeDays, day]);
+
+  const breaks = useMemo(() => slots.filter((s) => s.is_break), [slots]);
+
   const daySlots = useMemo(
-    () => slots.filter((s) => s.day === day).sort((a, b) => a.period_no - b.period_no),
+    () => slots.filter((s) => s.day === day && !s.is_break).sort((a, b) => a.period_no - b.period_no),
     [slots, day],
   );
+
+  function addBreak() {
+    setSlots((prev) => [
+      ...prev,
+      {
+        id: uid(),
+        day: "Mon",
+        period_no: 0,
+        start_time: "13:00",
+        end_time: "13:40",
+        subject: "Lunch Break",
+        teacher: "",
+        room: "",
+        is_break: true,
+      },
+    ]);
+    setDirty(true);
+  }
 
   function update(id: string, patch: Partial<TimetableSlot>) {
     setSlots((prev) => prev.map((s) => (s.id === id ? { ...s, ...patch } : s)));
