@@ -32,8 +32,10 @@ export function TimetableGrid({
   /** Class-level timetable settings, e.g. whether Saturday is enabled. */
   settings?: TimetableSettings | null;
 }) {
-  const ordered = sortSlots(slots);
-  const days = day ? [day] : timetableDays(ordered, settings);
+  const all = sortSlots(slots);
+  const days = day ? [day] : timetableDays(all, settings);
+  // Breaks are shared columns; ordinary periods only show for rendered days.
+  const ordered = all.filter((slot) => isBreak(slot) || days.includes(slot.day));
   const columns = Array.from(
     ordered.reduce((map, slot) => {
       const key = columnKey(slot);
