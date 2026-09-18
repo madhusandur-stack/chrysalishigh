@@ -117,7 +117,10 @@ export function TimetableGrid({
 
       <div className="space-y-3 md:hidden">
         {days.map((d) => {
-          const rows = ordered.filter((slot) => slot.day === d);
+          const breaks = ordered.filter((slot) => isBreak(slot));
+          const rows = [...ordered.filter((slot) => !isBreak(slot) && slot.day === d), ...breaks.map((b) => ({ ...b, day: d }))].sort(
+            (a, b) => a.start_time.localeCompare(b.start_time),
+          );
           const isToday = highlightDay === d;
           return (
             <section key={d} className={cn("overflow-hidden rounded-[16px] border bg-paper", isToday ? "border-[color:var(--signal)]" : "border-line")}>
