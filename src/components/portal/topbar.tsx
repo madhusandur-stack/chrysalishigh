@@ -34,59 +34,63 @@ export function TopBar() {
 
   return (
     <>
-      <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-line bg-[color-mix(in_srgb,var(--canvas)_85%,transparent)] px-4 backdrop-blur-md sm:px-6 lg:px-8">
-        <SearchTrigger onClick={openPalette} />
+      <header className="sticky top-0 z-30 grid h-16 w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-b border-line bg-[color-mix(in_srgb,var(--canvas)_85%,transparent)] px-4 backdrop-blur-md sm:gap-3 sm:px-6 lg:px-8">
+        <div className="flex min-w-0">
+          <SearchTrigger onClick={openPalette} />
+        </div>
 
-        {campusName && (
-          <div className="hidden items-center gap-1.5 rounded-full border border-line bg-paper px-3 py-1.5 text-[12px] font-medium text-[color:var(--ink-soft)] md:flex">
-            <MapPin className="h-3.5 w-3.5 text-[color:var(--signal)]" />
-            <span className="truncate max-w-[220px]">{campusName}</span>
-          </div>
-        )}
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          {campusName && (
+            <div className="hidden max-w-[220px] items-center gap-1.5 rounded-full border border-line bg-paper px-3 py-1.5 text-[12px] font-medium text-[color:var(--ink-soft)] md:flex xl:max-w-[300px]">
+              <MapPin className="h-3.5 w-3.5 shrink-0 text-[color:var(--signal)]" />
+              <span className="truncate">{campusName}</span>
+            </div>
+          )}
 
-        <button
-          aria-label="Notifications"
-          className="relative flex h-10 w-10 items-center justify-center rounded-full border border-line bg-paper text-[color:var(--ink-soft)] transition hover:text-[color:var(--ink)]"
-        >
-          <Bell className="h-[18px] w-[18px]" strokeWidth={1.75} />
-          <span className="absolute right-2.5 top-2.5 h-1.5 w-1.5 rounded-full bg-[color:var(--ember)]" />
-        </button>
-
-        <button
-          onClick={toggle}
-          aria-label="Toggle theme"
-          className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-line bg-paper text-[color:var(--ink-soft)] transition hover:text-[color:var(--ink)]"
-        >
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={theme}
-              initial={{ rotate: -60, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: 60, opacity: 0 }}
-              transition={{ duration: 0.28 }}
-            >
-              {theme === "dark" ? <Sun className="h-[18px] w-[18px]" strokeWidth={1.75} /> : <Moon className="h-[18px] w-[18px]" strokeWidth={1.75} />}
-            </motion.div>
-          </AnimatePresence>
-        </button>
-
-        <div className="hidden items-center gap-3 rounded-full border border-line bg-paper py-1.5 pl-1.5 pr-2 sm:flex">
-          <div className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-[color:var(--signal)] to-[color:var(--violet)] text-xs font-semibold text-white">
-            {initials || "?"}
-          </div>
-          <div className="text-right leading-tight">
-            <div className="text-[13px] font-semibold">{displayName}</div>
-            {profile?.grade && (
-              <div className="mono text-[11px] text-[color:var(--ink-soft)]">{profile.grade}</div>
-            )}
-          </div>
           <button
-            onClick={async () => { await signOut(); navigate({ to: "/auth" }); }}
-            aria-label="Sign out"
-            className="ml-1 flex h-8 w-8 items-center justify-center rounded-full text-[color:var(--ink-soft)] transition hover:bg-paper-2 hover:text-[color:var(--ink)]"
+            aria-label="Notifications"
+            className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line bg-paper text-[color:var(--ink-soft)] transition hover:text-[color:var(--ink)]"
           >
-            <LogOut className="h-4 w-4" />
+            <Bell className="h-[18px] w-[18px]" strokeWidth={1.75} />
+            <span className="absolute right-2.5 top-2.5 h-1.5 w-1.5 rounded-full bg-[color:var(--ember)]" />
           </button>
+
+          <button
+            onClick={toggle}
+            aria-label="Toggle theme"
+            className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line bg-paper text-[color:var(--ink-soft)] transition hover:text-[color:var(--ink)]"
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={theme}
+                initial={{ rotate: -60, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 60, opacity: 0 }}
+                transition={{ duration: 0.28 }}
+              >
+                {theme === "dark" ? <Sun className="h-[18px] w-[18px]" strokeWidth={1.75} /> : <Moon className="h-[18px] w-[18px]" strokeWidth={1.75} />}
+              </motion.div>
+            </AnimatePresence>
+          </button>
+
+          <div className="hidden shrink-0 items-center gap-3 rounded-full border border-line bg-paper py-1.5 pl-1.5 pr-2 sm:flex">
+            <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[color:var(--signal)] to-[color:var(--violet)] text-xs font-semibold text-white">
+              {initials || "?"}
+            </div>
+            <div className="hidden max-w-40 text-right leading-tight xl:block">
+              <div className="truncate text-[13px] font-semibold">{displayName}</div>
+              {profile?.grade && (
+                <div className="mono truncate text-[11px] text-[color:var(--ink-soft)]">{profile.grade}</div>
+              )}
+            </div>
+            <button
+              onClick={async () => { await signOut(); navigate({ to: "/auth" }); }}
+              aria-label="Sign out"
+              className="ml-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[color:var(--ink-soft)] transition hover:bg-paper-2 hover:text-[color:var(--ink)]"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </header>
       <CommandPalette key={paletteOpen ? "1" : "0"} />
