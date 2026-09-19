@@ -35,7 +35,7 @@ export function TopBar() {
   return (
     <>
       <header className="sticky top-0 z-30 grid h-16 w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-b border-line bg-[color-mix(in_srgb,var(--canvas)_85%,transparent)] px-4 backdrop-blur-md sm:gap-3 sm:px-6 lg:px-8">
-        <div className="min-w-0">
+        <div className="flex min-w-0">
           <SearchTrigger onClick={openPalette} />
         </div>
 
