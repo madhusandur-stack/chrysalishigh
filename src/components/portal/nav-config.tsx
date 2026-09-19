@@ -45,11 +45,10 @@ export const studentNav: NavItem[] = [
 ];
 
 export const dockNav: NavItem[] = [
-  { to: "/dashboard", label: "Home", icon: LayoutDashboard },
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/homework", label: "Homework", icon: BookOpen },
-  { to: "/attendance", label: "Attend", icon: CalendarCheck },
+  { to: "/attendance", label: "Attendance", icon: CalendarCheck },
   { to: "/diary", label: "Diary", icon: NotebookPen },
-  { to: "/profile", label: "Profile", icon: User },
 ];
 
 export const teacherNav: NavItem[] = [

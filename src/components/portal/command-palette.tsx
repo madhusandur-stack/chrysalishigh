@@ -123,7 +123,7 @@ export function SearchTrigger({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="glass flex h-10 min-w-0 flex-1 max-w-md items-center gap-3 rounded-full px-4 text-sm text-[color:var(--ink-soft)] transition hover:text-[color:var(--ink)]"
+      className="glass flex h-10 min-w-0 flex-1 items-center gap-3 rounded-full px-4 text-sm text-[color:var(--ink-soft)] transition hover:text-[color:var(--ink)]"
     >
       <Search className="h-4 w-4 shrink-0" />
       <span className="truncate">Search homework, notices, teachers…</span>
