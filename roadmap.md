@@ -6,3 +6,4 @@
 - [ ] Verify Varthur student dashboard and timetable end to end
 - [x] Verify responsive student header and mobile navigation menu
 - [x] Upgrade the student profile into a complete read-only school record
+- [x] Teachers can upload student photos shown on the student profile
