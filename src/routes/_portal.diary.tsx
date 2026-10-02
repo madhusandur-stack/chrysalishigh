@@ -19,7 +19,6 @@ import {
   getMyIdentity,
   gradeFor,
   listHomework,
-  listHomeworkStatus,
   listHomeworkTargets,
   listNotices,
   listPupa,
