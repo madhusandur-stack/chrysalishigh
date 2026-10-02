@@ -92,11 +92,6 @@ function DiaryPage() {
     queryFn: () => listHomework(student!.class_id),
     enabled: !!student,
   });
-  const statusQ = useQuery({
-    queryKey: qk.homeworkStatus(student?.id),
-    queryFn: () => listHomeworkStatus(student!.id),
-    enabled: !!student,
-  });
   const targetsQ = useQuery({
     queryKey: ["school", "homework-targets", student?.class_id],
     queryFn: () => listHomeworkTargets((hwQ.data ?? []).map((h) => h.id)),
