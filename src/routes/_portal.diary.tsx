@@ -112,9 +112,6 @@ function DiaryPage() {
     );
   }, [hwQ.data, targetsQ.data, student]);
 
-  const statusFor = (id: string) =>
-    (statusQ.data ?? []).find((s) => s.homework_id === id)?.status ?? "pending";
-
   const notices = useMemo(
     () => noticesForStudent(noticesQ.data ?? [], student),
     [noticesQ.data, student],
@@ -193,7 +190,7 @@ function DiaryPage() {
                       description={[h.chapter, h.due_date ? `Due ${fmtDate(h.due_date)}` : null]
                         .filter(Boolean)
                         .join(" · ")}
-                      actions={<StatusPill status={statusFor(h.id)}>{statusFor(h.id)}</StatusPill>}
+                      actions={null}
                     >
                       {h.description ? (
                         <p className="text-sm leading-relaxed text-[color:var(--ink-soft)]">{h.description}</p>
