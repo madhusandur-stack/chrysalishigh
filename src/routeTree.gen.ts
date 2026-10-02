@@ -9,77 +9,58 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as PortalRouteImport } from './routes/_portal'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as StaffRouteImport } from './routes/staff'
-import { Route as StaffPortalRouteImport } from './routes/staff-portal'
-import { Route as TeacherRouteImport } from './routes/teacher'
 import { Route as TeacherPortalRouteImport } from './routes/teacher-portal'
-import { Route as PortalAcademicsRouteImport } from './routes/_portal.academics'
-import { Route as PortalAttendanceRouteImport } from './routes/_portal.attendance'
-import { Route as PortalBusRouteImport } from './routes/_portal.bus'
-import { Route as PortalCafeteriaRouteImport } from './routes/_portal.cafeteria'
-import { Route as PortalCalendarRouteImport } from './routes/_portal.calendar'
-import { Route as PortalDashboardRouteImport } from './routes/_portal.dashboard'
-import { Route as PortalDiaryRouteImport } from './routes/_portal.diary'
-import { Route as PortalDocumentsRouteImport } from './routes/_portal.documents'
-import { Route as PortalFeesRouteImport } from './routes/_portal.fees'
-import { Route as PortalGalleryRouteImport } from './routes/_portal.gallery'
-import { Route as PortalHomeworkRouteImport } from './routes/_portal.homework'
-import { Route as PortalNoticeboardRouteImport } from './routes/_portal.noticeboard'
-import { Route as PortalProfileRouteImport } from './routes/_portal.profile'
-import { Route as PortalReportCardsRouteImport } from './routes/_portal.report-cards'
-import { Route as PortalSettingsRouteImport } from './routes/_portal.settings'
-import { Route as PortalTimetableRouteImport } from './routes/_portal.timetable'
-import { Route as StaffPortalIndexRouteImport } from './routes/staff-portal.index'
-import { Route as StaffPortalAttendanceRouteImport } from './routes/staff-portal.attendance'
-import { Route as StaffPortalClassesRouteImport } from './routes/staff-portal.classes'
-import { Route as StaffPortalHomeworkRouteImport } from './routes/staff-portal.homework'
-import { Route as StaffPortalMasterDataRouteImport } from './routes/staff-portal.master-data'
-import { Route as StaffPortalNoticesRouteImport } from './routes/staff-portal.notices'
-import { Route as StaffPortalProfileRouteImport } from './routes/staff-portal.profile'
-import { Route as StaffPortalRegularizationRouteImport } from './routes/staff-portal.regularization'
-import { Route as StaffPortalStudentsRouteImport } from './routes/staff-portal.students'
-import { Route as StaffPortalTeacherAttendanceRouteImport } from './routes/staff-portal.teacher-attendance'
-import { Route as StaffPortalTeachersRouteImport } from './routes/staff-portal.teachers'
-import { Route as StaffPortalTimetableRouteImport } from './routes/staff-portal.timetable'
+import { Route as TeacherRouteImport } from './routes/teacher'
+import { Route as StaffPortalRouteImport } from './routes/staff-portal'
+import { Route as StaffRouteImport } from './routes/staff'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as PortalRouteImport } from './routes/_portal'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as TeacherPortalIndexRouteImport } from './routes/teacher-portal.index'
-import { Route as TeacherPortalAttendanceRouteImport } from './routes/teacher-portal.attendance'
-import { Route as TeacherPortalCalendarRouteImport } from './routes/teacher-portal.calendar'
-import { Route as TeacherPortalClassesRouteImport } from './routes/teacher-portal.classes'
-import { Route as TeacherPortalHomeworkRouteImport } from './routes/teacher-portal.homework'
-import { Route as TeacherPortalMyAttendanceRouteImport } from './routes/teacher-portal.my-attendance'
-import { Route as TeacherPortalNoticesRouteImport } from './routes/teacher-portal.notices'
-import { Route as TeacherPortalPlannerRouteImport } from './routes/teacher-portal.planner'
-import { Route as TeacherPortalProfileRouteImport } from './routes/teacher-portal.profile'
-import { Route as TeacherPortalPupaRouteImport } from './routes/teacher-portal.pupa'
-import { Route as TeacherPortalRegularizationRouteImport } from './routes/teacher-portal.regularization'
-import { Route as TeacherPortalStudentsRouteImport } from './routes/teacher-portal.students'
+import { Route as StaffPortalIndexRouteImport } from './routes/staff-portal.index'
 import { Route as TeacherPortalTimetableRouteImport } from './routes/teacher-portal.timetable'
+import { Route as TeacherPortalStudentsRouteImport } from './routes/teacher-portal.students'
+import { Route as TeacherPortalRegularizationRouteImport } from './routes/teacher-portal.regularization'
+import { Route as TeacherPortalPupaRouteImport } from './routes/teacher-portal.pupa'
+import { Route as TeacherPortalProfileRouteImport } from './routes/teacher-portal.profile'
+import { Route as TeacherPortalPlannerRouteImport } from './routes/teacher-portal.planner'
+import { Route as TeacherPortalNoticesRouteImport } from './routes/teacher-portal.notices'
+import { Route as TeacherPortalMyAttendanceRouteImport } from './routes/teacher-portal.my-attendance'
+import { Route as TeacherPortalHomeworkRouteImport } from './routes/teacher-portal.homework'
+import { Route as TeacherPortalClassesRouteImport } from './routes/teacher-portal.classes'
+import { Route as TeacherPortalCalendarRouteImport } from './routes/teacher-portal.calendar'
+import { Route as TeacherPortalAttendanceRouteImport } from './routes/teacher-portal.attendance'
+import { Route as StaffPortalTimetableRouteImport } from './routes/staff-portal.timetable'
+import { Route as StaffPortalTeachersRouteImport } from './routes/staff-portal.teachers'
+import { Route as StaffPortalTeacherAttendanceRouteImport } from './routes/staff-portal.teacher-attendance'
+import { Route as StaffPortalStudentsRouteImport } from './routes/staff-portal.students'
+import { Route as StaffPortalRegularizationRouteImport } from './routes/staff-portal.regularization'
+import { Route as StaffPortalProfileRouteImport } from './routes/staff-portal.profile'
+import { Route as StaffPortalNoticesRouteImport } from './routes/staff-portal.notices'
+import { Route as StaffPortalMasterDataRouteImport } from './routes/staff-portal.master-data'
+import { Route as StaffPortalHomeworkRouteImport } from './routes/staff-portal.homework'
+import { Route as StaffPortalClassesRouteImport } from './routes/staff-portal.classes'
+import { Route as StaffPortalAttendanceRouteImport } from './routes/staff-portal.attendance'
+import { Route as PortalTimetableRouteImport } from './routes/_portal.timetable'
+import { Route as PortalSettingsRouteImport } from './routes/_portal.settings'
+import { Route as PortalReportCardsRouteImport } from './routes/_portal.report-cards'
+import { Route as PortalProfileRouteImport } from './routes/_portal.profile'
+import { Route as PortalNoticeboardRouteImport } from './routes/_portal.noticeboard'
+import { Route as PortalHomeworkRouteImport } from './routes/_portal.homework'
+import { Route as PortalGalleryRouteImport } from './routes/_portal.gallery'
+import { Route as PortalFeesRouteImport } from './routes/_portal.fees'
+import { Route as PortalDocumentsRouteImport } from './routes/_portal.documents'
+import { Route as PortalDiaryRouteImport } from './routes/_portal.diary'
+import { Route as PortalDashboardRouteImport } from './routes/_portal.dashboard'
+import { Route as PortalCalendarRouteImport } from './routes/_portal.calendar'
+import { Route as PortalCafeteriaRouteImport } from './routes/_portal.cafeteria'
+import { Route as PortalBusRouteImport } from './routes/_portal.bus'
+import { Route as PortalAttendanceRouteImport } from './routes/_portal.attendance'
+import { Route as PortalAcademicsRouteImport } from './routes/_portal.academics'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PortalRoute = PortalRouteImport.update({
-  id: '/_portal',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StaffRoute = StaffRouteImport.update({
-  id: '/staff',
-  path: '/staff',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StaffPortalRoute = StaffPortalRouteImport.update({
-  id: '/staff-portal',
-  path: '/staff-portal',
+const TeacherPortalRoute = TeacherPortalRouteImport.update({
+  id: '/teacher-portal',
+  path: '/teacher-portal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TeacherRoute = TeacherRouteImport.update({
@@ -87,202 +68,48 @@ const TeacherRoute = TeacherRouteImport.update({
   path: '/teacher',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TeacherPortalRoute = TeacherPortalRouteImport.update({
-  id: '/teacher-portal',
-  path: '/teacher-portal',
+const StaffPortalRoute = StaffPortalRouteImport.update({
+  id: '/staff-portal',
+  path: '/staff-portal',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PortalAcademicsRoute = PortalAcademicsRouteImport.update({
-  id: '/academics',
-  path: '/academics',
-  getParentRoute: () => PortalRoute,
+const StaffRoute = StaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const PortalAttendanceRoute = PortalAttendanceRouteImport.update({
-  id: '/attendance',
-  path: '/attendance',
-  getParentRoute: () => PortalRoute,
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const PortalBusRoute = PortalBusRouteImport.update({
-  id: '/bus',
-  path: '/bus',
-  getParentRoute: () => PortalRoute,
+const PortalRoute = PortalRouteImport.update({
+  id: '/_portal',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const PortalCafeteriaRoute = PortalCafeteriaRouteImport.update({
-  id: '/cafeteria',
-  path: '/cafeteria',
-  getParentRoute: () => PortalRoute,
-} as any)
-const PortalCalendarRoute = PortalCalendarRouteImport.update({
-  id: '/calendar',
-  path: '/calendar',
-  getParentRoute: () => PortalRoute,
-} as any)
-const PortalDashboardRoute = PortalDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => PortalRoute,
-} as any)
-const PortalDiaryRoute = PortalDiaryRouteImport.update({
-  id: '/diary',
-  path: '/diary',
-  getParentRoute: () => PortalRoute,
-} as any)
-const PortalDocumentsRoute = PortalDocumentsRouteImport.update({
-  id: '/documents',
-  path: '/documents',
-  getParentRoute: () => PortalRoute,
-} as any)
-const PortalFeesRoute = PortalFeesRouteImport.update({
-  id: '/fees',
-  path: '/fees',
-  getParentRoute: () => PortalRoute,
-} as any)
-const PortalGalleryRoute = PortalGalleryRouteImport.update({
-  id: '/gallery',
-  path: '/gallery',
-  getParentRoute: () => PortalRoute,
-} as any)
-const PortalHomeworkRoute = PortalHomeworkRouteImport.update({
-  id: '/homework',
-  path: '/homework',
-  getParentRoute: () => PortalRoute,
-} as any)
-const PortalNoticeboardRoute = PortalNoticeboardRouteImport.update({
-  id: '/noticeboard',
-  path: '/noticeboard',
-  getParentRoute: () => PortalRoute,
-} as any)
-const PortalProfileRoute = PortalProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => PortalRoute,
-} as any)
-const PortalReportCardsRoute = PortalReportCardsRouteImport.update({
-  id: '/report-cards',
-  path: '/report-cards',
-  getParentRoute: () => PortalRoute,
-} as any)
-const PortalSettingsRoute = PortalSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => PortalRoute,
-} as any)
-const PortalTimetableRoute = PortalTimetableRouteImport.update({
-  id: '/timetable',
-  path: '/timetable',
-  getParentRoute: () => PortalRoute,
-} as any)
-const StaffPortalIndexRoute = StaffPortalIndexRouteImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => StaffPortalRoute,
-} as any)
-const StaffPortalAttendanceRoute = StaffPortalAttendanceRouteImport.update({
-  id: '/attendance',
-  path: '/attendance',
-  getParentRoute: () => StaffPortalRoute,
-} as any)
-const StaffPortalClassesRoute = StaffPortalClassesRouteImport.update({
-  id: '/classes',
-  path: '/classes',
-  getParentRoute: () => StaffPortalRoute,
-} as any)
-const StaffPortalHomeworkRoute = StaffPortalHomeworkRouteImport.update({
-  id: '/homework',
-  path: '/homework',
-  getParentRoute: () => StaffPortalRoute,
-} as any)
-const StaffPortalMasterDataRoute = StaffPortalMasterDataRouteImport.update({
-  id: '/master-data',
-  path: '/master-data',
-  getParentRoute: () => StaffPortalRoute,
-} as any)
-const StaffPortalNoticesRoute = StaffPortalNoticesRouteImport.update({
-  id: '/notices',
-  path: '/notices',
-  getParentRoute: () => StaffPortalRoute,
-} as any)
-const StaffPortalProfileRoute = StaffPortalProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => StaffPortalRoute,
-} as any)
-const StaffPortalRegularizationRoute =
-  StaffPortalRegularizationRouteImport.update({
-    id: '/regularization',
-    path: '/regularization',
-    getParentRoute: () => StaffPortalRoute,
-  } as any)
-const StaffPortalStudentsRoute = StaffPortalStudentsRouteImport.update({
-  id: '/students',
-  path: '/students',
-  getParentRoute: () => StaffPortalRoute,
-} as any)
-const StaffPortalTeacherAttendanceRoute =
-  StaffPortalTeacherAttendanceRouteImport.update({
-    id: '/teacher-attendance',
-    path: '/teacher-attendance',
-    getParentRoute: () => StaffPortalRoute,
-  } as any)
-const StaffPortalTeachersRoute = StaffPortalTeachersRouteImport.update({
-  id: '/teachers',
-  path: '/teachers',
-  getParentRoute: () => StaffPortalRoute,
-} as any)
-const StaffPortalTimetableRoute = StaffPortalTimetableRouteImport.update({
-  id: '/timetable',
-  path: '/timetable',
-  getParentRoute: () => StaffPortalRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
 const TeacherPortalIndexRoute = TeacherPortalIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => TeacherPortalRoute,
 } as any)
-const TeacherPortalAttendanceRoute = TeacherPortalAttendanceRouteImport.update({
-  id: '/attendance',
-  path: '/attendance',
+const StaffPortalIndexRoute = StaffPortalIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StaffPortalRoute,
+} as any)
+const TeacherPortalTimetableRoute = TeacherPortalTimetableRouteImport.update({
+  id: '/timetable',
+  path: '/timetable',
   getParentRoute: () => TeacherPortalRoute,
 } as any)
-const TeacherPortalCalendarRoute = TeacherPortalCalendarRouteImport.update({
-  id: '/calendar',
-  path: '/calendar',
-  getParentRoute: () => TeacherPortalRoute,
-} as any)
-const TeacherPortalClassesRoute = TeacherPortalClassesRouteImport.update({
-  id: '/classes',
-  path: '/classes',
-  getParentRoute: () => TeacherPortalRoute,
-} as any)
-const TeacherPortalHomeworkRoute = TeacherPortalHomeworkRouteImport.update({
-  id: '/homework',
-  path: '/homework',
-  getParentRoute: () => TeacherPortalRoute,
-} as any)
-const TeacherPortalMyAttendanceRoute =
-  TeacherPortalMyAttendanceRouteImport.update({
-    id: '/my-attendance',
-    path: '/my-attendance',
-    getParentRoute: () => TeacherPortalRoute,
-  } as any)
-const TeacherPortalNoticesRoute = TeacherPortalNoticesRouteImport.update({
-  id: '/notices',
-  path: '/notices',
-  getParentRoute: () => TeacherPortalRoute,
-} as any)
-const TeacherPortalPlannerRoute = TeacherPortalPlannerRouteImport.update({
-  id: '/planner',
-  path: '/planner',
-  getParentRoute: () => TeacherPortalRoute,
-} as any)
-const TeacherPortalProfileRoute = TeacherPortalProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => TeacherPortalRoute,
-} as any)
-const TeacherPortalPupaRoute = TeacherPortalPupaRouteImport.update({
-  id: '/pupa',
-  path: '/pupa',
+const TeacherPortalStudentsRoute = TeacherPortalStudentsRouteImport.update({
+  id: '/students',
+  path: '/students',
   getParentRoute: () => TeacherPortalRoute,
 } as any)
 const TeacherPortalRegularizationRoute =
@@ -291,15 +118,188 @@ const TeacherPortalRegularizationRoute =
     path: '/regularization',
     getParentRoute: () => TeacherPortalRoute,
   } as any)
-const TeacherPortalStudentsRoute = TeacherPortalStudentsRouteImport.update({
-  id: '/students',
-  path: '/students',
+const TeacherPortalPupaRoute = TeacherPortalPupaRouteImport.update({
+  id: '/pupa',
+  path: '/pupa',
   getParentRoute: () => TeacherPortalRoute,
 } as any)
-const TeacherPortalTimetableRoute = TeacherPortalTimetableRouteImport.update({
+const TeacherPortalProfileRoute = TeacherPortalProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => TeacherPortalRoute,
+} as any)
+const TeacherPortalPlannerRoute = TeacherPortalPlannerRouteImport.update({
+  id: '/planner',
+  path: '/planner',
+  getParentRoute: () => TeacherPortalRoute,
+} as any)
+const TeacherPortalNoticesRoute = TeacherPortalNoticesRouteImport.update({
+  id: '/notices',
+  path: '/notices',
+  getParentRoute: () => TeacherPortalRoute,
+} as any)
+const TeacherPortalMyAttendanceRoute =
+  TeacherPortalMyAttendanceRouteImport.update({
+    id: '/my-attendance',
+    path: '/my-attendance',
+    getParentRoute: () => TeacherPortalRoute,
+  } as any)
+const TeacherPortalHomeworkRoute = TeacherPortalHomeworkRouteImport.update({
+  id: '/homework',
+  path: '/homework',
+  getParentRoute: () => TeacherPortalRoute,
+} as any)
+const TeacherPortalClassesRoute = TeacherPortalClassesRouteImport.update({
+  id: '/classes',
+  path: '/classes',
+  getParentRoute: () => TeacherPortalRoute,
+} as any)
+const TeacherPortalCalendarRoute = TeacherPortalCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => TeacherPortalRoute,
+} as any)
+const TeacherPortalAttendanceRoute = TeacherPortalAttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
+  getParentRoute: () => TeacherPortalRoute,
+} as any)
+const StaffPortalTimetableRoute = StaffPortalTimetableRouteImport.update({
   id: '/timetable',
   path: '/timetable',
-  getParentRoute: () => TeacherPortalRoute,
+  getParentRoute: () => StaffPortalRoute,
+} as any)
+const StaffPortalTeachersRoute = StaffPortalTeachersRouteImport.update({
+  id: '/teachers',
+  path: '/teachers',
+  getParentRoute: () => StaffPortalRoute,
+} as any)
+const StaffPortalTeacherAttendanceRoute =
+  StaffPortalTeacherAttendanceRouteImport.update({
+    id: '/teacher-attendance',
+    path: '/teacher-attendance',
+    getParentRoute: () => StaffPortalRoute,
+  } as any)
+const StaffPortalStudentsRoute = StaffPortalStudentsRouteImport.update({
+  id: '/students',
+  path: '/students',
+  getParentRoute: () => StaffPortalRoute,
+} as any)
+const StaffPortalRegularizationRoute =
+  StaffPortalRegularizationRouteImport.update({
+    id: '/regularization',
+    path: '/regularization',
+    getParentRoute: () => StaffPortalRoute,
+  } as any)
+const StaffPortalProfileRoute = StaffPortalProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => StaffPortalRoute,
+} as any)
+const StaffPortalNoticesRoute = StaffPortalNoticesRouteImport.update({
+  id: '/notices',
+  path: '/notices',
+  getParentRoute: () => StaffPortalRoute,
+} as any)
+const StaffPortalMasterDataRoute = StaffPortalMasterDataRouteImport.update({
+  id: '/master-data',
+  path: '/master-data',
+  getParentRoute: () => StaffPortalRoute,
+} as any)
+const StaffPortalHomeworkRoute = StaffPortalHomeworkRouteImport.update({
+  id: '/homework',
+  path: '/homework',
+  getParentRoute: () => StaffPortalRoute,
+} as any)
+const StaffPortalClassesRoute = StaffPortalClassesRouteImport.update({
+  id: '/classes',
+  path: '/classes',
+  getParentRoute: () => StaffPortalRoute,
+} as any)
+const StaffPortalAttendanceRoute = StaffPortalAttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
+  getParentRoute: () => StaffPortalRoute,
+} as any)
+const PortalTimetableRoute = PortalTimetableRouteImport.update({
+  id: '/timetable',
+  path: '/timetable',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalSettingsRoute = PortalSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalReportCardsRoute = PortalReportCardsRouteImport.update({
+  id: '/report-cards',
+  path: '/report-cards',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalProfileRoute = PortalProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalNoticeboardRoute = PortalNoticeboardRouteImport.update({
+  id: '/noticeboard',
+  path: '/noticeboard',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalHomeworkRoute = PortalHomeworkRouteImport.update({
+  id: '/homework',
+  path: '/homework',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalGalleryRoute = PortalGalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalFeesRoute = PortalFeesRouteImport.update({
+  id: '/fees',
+  path: '/fees',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalDocumentsRoute = PortalDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalDiaryRoute = PortalDiaryRouteImport.update({
+  id: '/diary',
+  path: '/diary',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalDashboardRoute = PortalDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalCalendarRoute = PortalCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalCafeteriaRoute = PortalCafeteriaRouteImport.update({
+  id: '/cafeteria',
+  path: '/cafeteria',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalBusRoute = PortalBusRouteImport.update({
+  id: '/bus',
+  path: '/bus',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalAttendanceRoute = PortalAttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalAcademicsRoute = PortalAcademicsRouteImport.update({
+  id: '/academics',
+  path: '/academics',
+  getParentRoute: () => PortalRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -610,39 +610,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_portal': {
-      id: '/_portal'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof PortalRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/staff': {
-      id: '/staff'
-      path: '/staff'
-      fullPath: '/staff'
-      preLoaderRoute: typeof StaffRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/staff-portal': {
-      id: '/staff-portal'
-      path: '/staff-portal'
-      fullPath: '/staff-portal'
-      preLoaderRoute: typeof StaffPortalRouteImport
+    '/teacher-portal': {
+      id: '/teacher-portal'
+      path: '/teacher-portal'
+      fullPath: '/teacher-portal'
+      preLoaderRoute: typeof TeacherPortalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/teacher': {
@@ -652,208 +624,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeacherRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/teacher-portal': {
-      id: '/teacher-portal'
-      path: '/teacher-portal'
-      fullPath: '/teacher-portal'
-      preLoaderRoute: typeof TeacherPortalRouteImport
+    '/staff-portal': {
+      id: '/staff-portal'
+      path: '/staff-portal'
+      fullPath: '/staff-portal'
+      preLoaderRoute: typeof StaffPortalRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_portal/academics': {
-      id: '/_portal/academics'
-      path: '/academics'
-      fullPath: '/academics'
-      preLoaderRoute: typeof PortalAcademicsRouteImport
-      parentRoute: typeof PortalRoute
+    '/staff': {
+      id: '/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof StaffRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_portal/attendance': {
-      id: '/_portal/attendance'
-      path: '/attendance'
-      fullPath: '/attendance'
-      preLoaderRoute: typeof PortalAttendanceRouteImport
-      parentRoute: typeof PortalRoute
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_portal/bus': {
-      id: '/_portal/bus'
-      path: '/bus'
-      fullPath: '/bus'
-      preLoaderRoute: typeof PortalBusRouteImport
-      parentRoute: typeof PortalRoute
+    '/_portal': {
+      id: '/_portal'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PortalRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_portal/cafeteria': {
-      id: '/_portal/cafeteria'
-      path: '/cafeteria'
-      fullPath: '/cafeteria'
-      preLoaderRoute: typeof PortalCafeteriaRouteImport
-      parentRoute: typeof PortalRoute
-    }
-    '/_portal/calendar': {
-      id: '/_portal/calendar'
-      path: '/calendar'
-      fullPath: '/calendar'
-      preLoaderRoute: typeof PortalCalendarRouteImport
-      parentRoute: typeof PortalRoute
-    }
-    '/_portal/dashboard': {
-      id: '/_portal/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof PortalDashboardRouteImport
-      parentRoute: typeof PortalRoute
-    }
-    '/_portal/diary': {
-      id: '/_portal/diary'
-      path: '/diary'
-      fullPath: '/diary'
-      preLoaderRoute: typeof PortalDiaryRouteImport
-      parentRoute: typeof PortalRoute
-    }
-    '/_portal/documents': {
-      id: '/_portal/documents'
-      path: '/documents'
-      fullPath: '/documents'
-      preLoaderRoute: typeof PortalDocumentsRouteImport
-      parentRoute: typeof PortalRoute
-    }
-    '/_portal/fees': {
-      id: '/_portal/fees'
-      path: '/fees'
-      fullPath: '/fees'
-      preLoaderRoute: typeof PortalFeesRouteImport
-      parentRoute: typeof PortalRoute
-    }
-    '/_portal/gallery': {
-      id: '/_portal/gallery'
-      path: '/gallery'
-      fullPath: '/gallery'
-      preLoaderRoute: typeof PortalGalleryRouteImport
-      parentRoute: typeof PortalRoute
-    }
-    '/_portal/homework': {
-      id: '/_portal/homework'
-      path: '/homework'
-      fullPath: '/homework'
-      preLoaderRoute: typeof PortalHomeworkRouteImport
-      parentRoute: typeof PortalRoute
-    }
-    '/_portal/noticeboard': {
-      id: '/_portal/noticeboard'
-      path: '/noticeboard'
-      fullPath: '/noticeboard'
-      preLoaderRoute: typeof PortalNoticeboardRouteImport
-      parentRoute: typeof PortalRoute
-    }
-    '/_portal/profile': {
-      id: '/_portal/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof PortalProfileRouteImport
-      parentRoute: typeof PortalRoute
-    }
-    '/_portal/report-cards': {
-      id: '/_portal/report-cards'
-      path: '/report-cards'
-      fullPath: '/report-cards'
-      preLoaderRoute: typeof PortalReportCardsRouteImport
-      parentRoute: typeof PortalRoute
-    }
-    '/_portal/settings': {
-      id: '/_portal/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof PortalSettingsRouteImport
-      parentRoute: typeof PortalRoute
-    }
-    '/_portal/timetable': {
-      id: '/_portal/timetable'
-      path: '/timetable'
-      fullPath: '/timetable'
-      preLoaderRoute: typeof PortalTimetableRouteImport
-      parentRoute: typeof PortalRoute
-    }
-    '/staff-portal/': {
-      id: '/staff-portal/'
+    '/': {
+      id: '/'
       path: '/'
-      fullPath: '/staff-portal/'
-      preLoaderRoute: typeof StaffPortalIndexRouteImport
-      parentRoute: typeof StaffPortalRoute
-    }
-    '/staff-portal/attendance': {
-      id: '/staff-portal/attendance'
-      path: '/attendance'
-      fullPath: '/staff-portal/attendance'
-      preLoaderRoute: typeof StaffPortalAttendanceRouteImport
-      parentRoute: typeof StaffPortalRoute
-    }
-    '/staff-portal/classes': {
-      id: '/staff-portal/classes'
-      path: '/classes'
-      fullPath: '/staff-portal/classes'
-      preLoaderRoute: typeof StaffPortalClassesRouteImport
-      parentRoute: typeof StaffPortalRoute
-    }
-    '/staff-portal/homework': {
-      id: '/staff-portal/homework'
-      path: '/homework'
-      fullPath: '/staff-portal/homework'
-      preLoaderRoute: typeof StaffPortalHomeworkRouteImport
-      parentRoute: typeof StaffPortalRoute
-    }
-    '/staff-portal/master-data': {
-      id: '/staff-portal/master-data'
-      path: '/master-data'
-      fullPath: '/staff-portal/master-data'
-      preLoaderRoute: typeof StaffPortalMasterDataRouteImport
-      parentRoute: typeof StaffPortalRoute
-    }
-    '/staff-portal/notices': {
-      id: '/staff-portal/notices'
-      path: '/notices'
-      fullPath: '/staff-portal/notices'
-      preLoaderRoute: typeof StaffPortalNoticesRouteImport
-      parentRoute: typeof StaffPortalRoute
-    }
-    '/staff-portal/profile': {
-      id: '/staff-portal/profile'
-      path: '/profile'
-      fullPath: '/staff-portal/profile'
-      preLoaderRoute: typeof StaffPortalProfileRouteImport
-      parentRoute: typeof StaffPortalRoute
-    }
-    '/staff-portal/regularization': {
-      id: '/staff-portal/regularization'
-      path: '/regularization'
-      fullPath: '/staff-portal/regularization'
-      preLoaderRoute: typeof StaffPortalRegularizationRouteImport
-      parentRoute: typeof StaffPortalRoute
-    }
-    '/staff-portal/students': {
-      id: '/staff-portal/students'
-      path: '/students'
-      fullPath: '/staff-portal/students'
-      preLoaderRoute: typeof StaffPortalStudentsRouteImport
-      parentRoute: typeof StaffPortalRoute
-    }
-    '/staff-portal/teacher-attendance': {
-      id: '/staff-portal/teacher-attendance'
-      path: '/teacher-attendance'
-      fullPath: '/staff-portal/teacher-attendance'
-      preLoaderRoute: typeof StaffPortalTeacherAttendanceRouteImport
-      parentRoute: typeof StaffPortalRoute
-    }
-    '/staff-portal/teachers': {
-      id: '/staff-portal/teachers'
-      path: '/teachers'
-      fullPath: '/staff-portal/teachers'
-      preLoaderRoute: typeof StaffPortalTeachersRouteImport
-      parentRoute: typeof StaffPortalRoute
-    }
-    '/staff-portal/timetable': {
-      id: '/staff-portal/timetable'
-      path: '/timetable'
-      fullPath: '/staff-portal/timetable'
-      preLoaderRoute: typeof StaffPortalTimetableRouteImport
-      parentRoute: typeof StaffPortalRoute
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/teacher-portal/': {
       id: '/teacher-portal/'
@@ -862,74 +666,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeacherPortalIndexRouteImport
       parentRoute: typeof TeacherPortalRoute
     }
-    '/teacher-portal/attendance': {
-      id: '/teacher-portal/attendance'
-      path: '/attendance'
-      fullPath: '/teacher-portal/attendance'
-      preLoaderRoute: typeof TeacherPortalAttendanceRouteImport
-      parentRoute: typeof TeacherPortalRoute
+    '/staff-portal/': {
+      id: '/staff-portal/'
+      path: '/'
+      fullPath: '/staff-portal/'
+      preLoaderRoute: typeof StaffPortalIndexRouteImport
+      parentRoute: typeof StaffPortalRoute
     }
-    '/teacher-portal/calendar': {
-      id: '/teacher-portal/calendar'
-      path: '/calendar'
-      fullPath: '/teacher-portal/calendar'
-      preLoaderRoute: typeof TeacherPortalCalendarRouteImport
-      parentRoute: typeof TeacherPortalRoute
-    }
-    '/teacher-portal/classes': {
-      id: '/teacher-portal/classes'
-      path: '/classes'
-      fullPath: '/teacher-portal/classes'
-      preLoaderRoute: typeof TeacherPortalClassesRouteImport
-      parentRoute: typeof TeacherPortalRoute
-    }
-    '/teacher-portal/homework': {
-      id: '/teacher-portal/homework'
-      path: '/homework'
-      fullPath: '/teacher-portal/homework'
-      preLoaderRoute: typeof TeacherPortalHomeworkRouteImport
-      parentRoute: typeof TeacherPortalRoute
-    }
-    '/teacher-portal/my-attendance': {
-      id: '/teacher-portal/my-attendance'
-      path: '/my-attendance'
-      fullPath: '/teacher-portal/my-attendance'
-      preLoaderRoute: typeof TeacherPortalMyAttendanceRouteImport
-      parentRoute: typeof TeacherPortalRoute
-    }
-    '/teacher-portal/notices': {
-      id: '/teacher-portal/notices'
-      path: '/notices'
-      fullPath: '/teacher-portal/notices'
-      preLoaderRoute: typeof TeacherPortalNoticesRouteImport
-      parentRoute: typeof TeacherPortalRoute
-    }
-    '/teacher-portal/planner': {
-      id: '/teacher-portal/planner'
-      path: '/planner'
-      fullPath: '/teacher-portal/planner'
-      preLoaderRoute: typeof TeacherPortalPlannerRouteImport
-      parentRoute: typeof TeacherPortalRoute
-    }
-    '/teacher-portal/profile': {
-      id: '/teacher-portal/profile'
-      path: '/profile'
-      fullPath: '/teacher-portal/profile'
-      preLoaderRoute: typeof TeacherPortalProfileRouteImport
-      parentRoute: typeof TeacherPortalRoute
-    }
-    '/teacher-portal/pupa': {
-      id: '/teacher-portal/pupa'
-      path: '/pupa'
-      fullPath: '/teacher-portal/pupa'
-      preLoaderRoute: typeof TeacherPortalPupaRouteImport
-      parentRoute: typeof TeacherPortalRoute
-    }
-    '/teacher-portal/regularization': {
-      id: '/teacher-portal/regularization'
-      path: '/regularization'
-      fullPath: '/teacher-portal/regularization'
-      preLoaderRoute: typeof TeacherPortalRegularizationRouteImport
+    '/teacher-portal/timetable': {
+      id: '/teacher-portal/timetable'
+      path: '/timetable'
+      fullPath: '/teacher-portal/timetable'
+      preLoaderRoute: typeof TeacherPortalTimetableRouteImport
       parentRoute: typeof TeacherPortalRoute
     }
     '/teacher-portal/students': {
@@ -939,12 +687,264 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeacherPortalStudentsRouteImport
       parentRoute: typeof TeacherPortalRoute
     }
-    '/teacher-portal/timetable': {
-      id: '/teacher-portal/timetable'
-      path: '/timetable'
-      fullPath: '/teacher-portal/timetable'
-      preLoaderRoute: typeof TeacherPortalTimetableRouteImport
+    '/teacher-portal/regularization': {
+      id: '/teacher-portal/regularization'
+      path: '/regularization'
+      fullPath: '/teacher-portal/regularization'
+      preLoaderRoute: typeof TeacherPortalRegularizationRouteImport
       parentRoute: typeof TeacherPortalRoute
+    }
+    '/teacher-portal/pupa': {
+      id: '/teacher-portal/pupa'
+      path: '/pupa'
+      fullPath: '/teacher-portal/pupa'
+      preLoaderRoute: typeof TeacherPortalPupaRouteImport
+      parentRoute: typeof TeacherPortalRoute
+    }
+    '/teacher-portal/profile': {
+      id: '/teacher-portal/profile'
+      path: '/profile'
+      fullPath: '/teacher-portal/profile'
+      preLoaderRoute: typeof TeacherPortalProfileRouteImport
+      parentRoute: typeof TeacherPortalRoute
+    }
+    '/teacher-portal/planner': {
+      id: '/teacher-portal/planner'
+      path: '/planner'
+      fullPath: '/teacher-portal/planner'
+      preLoaderRoute: typeof TeacherPortalPlannerRouteImport
+      parentRoute: typeof TeacherPortalRoute
+    }
+    '/teacher-portal/notices': {
+      id: '/teacher-portal/notices'
+      path: '/notices'
+      fullPath: '/teacher-portal/notices'
+      preLoaderRoute: typeof TeacherPortalNoticesRouteImport
+      parentRoute: typeof TeacherPortalRoute
+    }
+    '/teacher-portal/my-attendance': {
+      id: '/teacher-portal/my-attendance'
+      path: '/my-attendance'
+      fullPath: '/teacher-portal/my-attendance'
+      preLoaderRoute: typeof TeacherPortalMyAttendanceRouteImport
+      parentRoute: typeof TeacherPortalRoute
+    }
+    '/teacher-portal/homework': {
+      id: '/teacher-portal/homework'
+      path: '/homework'
+      fullPath: '/teacher-portal/homework'
+      preLoaderRoute: typeof TeacherPortalHomeworkRouteImport
+      parentRoute: typeof TeacherPortalRoute
+    }
+    '/teacher-portal/classes': {
+      id: '/teacher-portal/classes'
+      path: '/classes'
+      fullPath: '/teacher-portal/classes'
+      preLoaderRoute: typeof TeacherPortalClassesRouteImport
+      parentRoute: typeof TeacherPortalRoute
+    }
+    '/teacher-portal/calendar': {
+      id: '/teacher-portal/calendar'
+      path: '/calendar'
+      fullPath: '/teacher-portal/calendar'
+      preLoaderRoute: typeof TeacherPortalCalendarRouteImport
+      parentRoute: typeof TeacherPortalRoute
+    }
+    '/teacher-portal/attendance': {
+      id: '/teacher-portal/attendance'
+      path: '/attendance'
+      fullPath: '/teacher-portal/attendance'
+      preLoaderRoute: typeof TeacherPortalAttendanceRouteImport
+      parentRoute: typeof TeacherPortalRoute
+    }
+    '/staff-portal/timetable': {
+      id: '/staff-portal/timetable'
+      path: '/timetable'
+      fullPath: '/staff-portal/timetable'
+      preLoaderRoute: typeof StaffPortalTimetableRouteImport
+      parentRoute: typeof StaffPortalRoute
+    }
+    '/staff-portal/teachers': {
+      id: '/staff-portal/teachers'
+      path: '/teachers'
+      fullPath: '/staff-portal/teachers'
+      preLoaderRoute: typeof StaffPortalTeachersRouteImport
+      parentRoute: typeof StaffPortalRoute
+    }
+    '/staff-portal/teacher-attendance': {
+      id: '/staff-portal/teacher-attendance'
+      path: '/teacher-attendance'
+      fullPath: '/staff-portal/teacher-attendance'
+      preLoaderRoute: typeof StaffPortalTeacherAttendanceRouteImport
+      parentRoute: typeof StaffPortalRoute
+    }
+    '/staff-portal/students': {
+      id: '/staff-portal/students'
+      path: '/students'
+      fullPath: '/staff-portal/students'
+      preLoaderRoute: typeof StaffPortalStudentsRouteImport
+      parentRoute: typeof StaffPortalRoute
+    }
+    '/staff-portal/regularization': {
+      id: '/staff-portal/regularization'
+      path: '/regularization'
+      fullPath: '/staff-portal/regularization'
+      preLoaderRoute: typeof StaffPortalRegularizationRouteImport
+      parentRoute: typeof StaffPortalRoute
+    }
+    '/staff-portal/profile': {
+      id: '/staff-portal/profile'
+      path: '/profile'
+      fullPath: '/staff-portal/profile'
+      preLoaderRoute: typeof StaffPortalProfileRouteImport
+      parentRoute: typeof StaffPortalRoute
+    }
+    '/staff-portal/notices': {
+      id: '/staff-portal/notices'
+      path: '/notices'
+      fullPath: '/staff-portal/notices'
+      preLoaderRoute: typeof StaffPortalNoticesRouteImport
+      parentRoute: typeof StaffPortalRoute
+    }
+    '/staff-portal/master-data': {
+      id: '/staff-portal/master-data'
+      path: '/master-data'
+      fullPath: '/staff-portal/master-data'
+      preLoaderRoute: typeof StaffPortalMasterDataRouteImport
+      parentRoute: typeof StaffPortalRoute
+    }
+    '/staff-portal/homework': {
+      id: '/staff-portal/homework'
+      path: '/homework'
+      fullPath: '/staff-portal/homework'
+      preLoaderRoute: typeof StaffPortalHomeworkRouteImport
+      parentRoute: typeof StaffPortalRoute
+    }
+    '/staff-portal/classes': {
+      id: '/staff-portal/classes'
+      path: '/classes'
+      fullPath: '/staff-portal/classes'
+      preLoaderRoute: typeof StaffPortalClassesRouteImport
+      parentRoute: typeof StaffPortalRoute
+    }
+    '/staff-portal/attendance': {
+      id: '/staff-portal/attendance'
+      path: '/attendance'
+      fullPath: '/staff-portal/attendance'
+      preLoaderRoute: typeof StaffPortalAttendanceRouteImport
+      parentRoute: typeof StaffPortalRoute
+    }
+    '/_portal/timetable': {
+      id: '/_portal/timetable'
+      path: '/timetable'
+      fullPath: '/timetable'
+      preLoaderRoute: typeof PortalTimetableRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/_portal/settings': {
+      id: '/_portal/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof PortalSettingsRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/_portal/report-cards': {
+      id: '/_portal/report-cards'
+      path: '/report-cards'
+      fullPath: '/report-cards'
+      preLoaderRoute: typeof PortalReportCardsRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/_portal/profile': {
+      id: '/_portal/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof PortalProfileRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/_portal/noticeboard': {
+      id: '/_portal/noticeboard'
+      path: '/noticeboard'
+      fullPath: '/noticeboard'
+      preLoaderRoute: typeof PortalNoticeboardRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/_portal/homework': {
+      id: '/_portal/homework'
+      path: '/homework'
+      fullPath: '/homework'
+      preLoaderRoute: typeof PortalHomeworkRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/_portal/gallery': {
+      id: '/_portal/gallery'
+      path: '/gallery'
+      fullPath: '/gallery'
+      preLoaderRoute: typeof PortalGalleryRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/_portal/fees': {
+      id: '/_portal/fees'
+      path: '/fees'
+      fullPath: '/fees'
+      preLoaderRoute: typeof PortalFeesRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/_portal/documents': {
+      id: '/_portal/documents'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof PortalDocumentsRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/_portal/diary': {
+      id: '/_portal/diary'
+      path: '/diary'
+      fullPath: '/diary'
+      preLoaderRoute: typeof PortalDiaryRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/_portal/dashboard': {
+      id: '/_portal/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof PortalDashboardRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/_portal/calendar': {
+      id: '/_portal/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof PortalCalendarRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/_portal/cafeteria': {
+      id: '/_portal/cafeteria'
+      path: '/cafeteria'
+      fullPath: '/cafeteria'
+      preLoaderRoute: typeof PortalCafeteriaRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/_portal/bus': {
+      id: '/_portal/bus'
+      path: '/bus'
+      fullPath: '/bus'
+      preLoaderRoute: typeof PortalBusRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/_portal/attendance': {
+      id: '/_portal/attendance'
+      path: '/attendance'
+      fullPath: '/attendance'
+      preLoaderRoute: typeof PortalAttendanceRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/_portal/academics': {
+      id: '/_portal/academics'
+      path: '/academics'
+      fullPath: '/academics'
+      preLoaderRoute: typeof PortalAcademicsRouteImport
+      parentRoute: typeof PortalRoute
     }
   }
 }
