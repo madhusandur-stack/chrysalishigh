@@ -190,7 +190,6 @@ function DiaryPage() {
                       description={[h.chapter, h.due_date ? `Due ${fmtDate(h.due_date)}` : null]
                         .filter(Boolean)
                         .join(" · ")}
-                      actions={null}
                     >
                       {h.description ? (
                         <p className="text-sm leading-relaxed text-[color:var(--ink-soft)]">{h.description}</p>
