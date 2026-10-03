@@ -1254,6 +1254,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_see_homework: {
+        Args: { _hw_id: string; _user_id: string }
+        Returns: boolean
+      }
       can_see_notice: {
         Args: {
           _class_ids: string[]
