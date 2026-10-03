@@ -20,9 +20,9 @@ import {
   TextInput,
 } from "@/components/portal/ui-kit";
 import {
-  DEMO_CLASS_ID,
   SUBJECTS,
   deleteHomework,
+  listClasses,
   getMyIdentity,
   listHomework,
   listHomeworkStatus,
@@ -75,22 +75,28 @@ function TeacherHomework() {
   const qc = useQueryClient();
   const [draft, setDraft] = useState<Draft | null>(null);
   const [filter, setFilter] = useState("all");
+  const [pickedClass, setPickedClass] = useState("");
 
   const identityQ = useQuery({ queryKey: qk.mine, queryFn: getMyIdentity, staleTime: 300_000 });
+  const classesQ = useQuery({ queryKey: ["school", "classes"], queryFn: listClasses, staleTime: 300_000 });
+  const classes = (classesQ.data ?? []) as { id: string; grade: string; section: string }[];
+  const classId = pickedClass || classes[0]?.id || "";
+  const className = classes.find((c) => c.id === classId);
   const studentsQ = useQuery({ queryKey: qk.students, queryFn: listStudents, staleTime: 300_000 });
   const homeworkQ = useQuery({
-    queryKey: qk.homework,
-    queryFn: () => listHomework(DEMO_CLASS_ID),
+    queryKey: [...qk.homework, classId],
+    queryFn: () => listHomework(classId),
+    enabled: !!classId,
   });
   const ids = (homeworkQ.data ?? []).map((h) => h.id);
   const targetsQ = useQuery({
-    queryKey: ["school", "homework-targets", ids.length],
+    queryKey: ["school", "homework-targets", classId, ids.length],
     queryFn: () => listHomeworkTargets(ids),
     enabled: ids.length > 0,
   });
   const statusQ = useQuery({ queryKey: qk.homeworkStatus(), queryFn: () => listHomeworkStatus() });
 
-  const students = studentsQ.data ?? [];
+  const students = (studentsQ.data ?? []).filter((s) => s.class_id === classId);
   const submissions = useMemo(() => {
     const map = new Map<string, { submitted: number; total: number }>();
     for (const s of statusQ.data ?? []) {
@@ -112,19 +118,19 @@ function TeacherHomework() {
 
   const save = useMutation({
     mutationFn: async (d: Draft) => {
+      if (!classId) throw new Error("Select a class");
       if (!d.subject.trim()) throw new Error("Subject is required");
-      if (!d.chapter.trim()) throw new Error("Chapter is required");
-      if (!d.topic.trim()) throw new Error("Topic is required");
+      if (!d.description.trim()) throw new Error("Homework description is required");
       if (!d.due_date) throw new Error("Due date is required");
       if (!d.assign_all && d.studentIds.length === 0) throw new Error("Select at least one student");
       return saveHomework({
         id: d.id,
-        class_id: DEMO_CLASS_ID,
+        class_id: classId,
         staff_id: identityQ.data?.staff?.id ?? null,
         subject: d.subject,
-        chapter: d.chapter,
-        topic: d.topic,
-        description: d.description || null,
+        chapter: d.chapter || null,
+        topic: d.topic || null,
+        description: d.description.trim(),
         due_date: d.due_date,
         scheduled_for: d.scheduled_for || null,
         status: d.scheduled_for && d.scheduled_for > new Date().toISOString().slice(0, 10) ? "scheduled" : "published",
@@ -178,11 +184,29 @@ function TeacherHomework() {
         }
       />
 
+      <div className="mb-6 max-w-xs">
+        <Field label="Class" required>
+          <Select
+            value={classId}
+            onChange={(e) => {
+              setPickedClass(e.target.value);
+              setDraft(null);
+            }}
+          >
+            {classes.map((c) => (
+              <option key={c.id} value={c.id}>
+                Grade {c.grade}-{c.section}
+              </option>
+            ))}
+          </Select>
+        </Field>
+      </div>
+
       {draft && (
         <SectionCard
           className="mb-6"
           title={draft.id ? "Edit homework" : "New homework"}
-          description="Chapter, topic and due date are required."
+          description={`For Grade ${className ? `${className.grade}-${className.section}` : "—"}. Subject, description and due date are required.`}
         >
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field label="Subject" required>
@@ -194,14 +218,14 @@ function TeacherHomework() {
                 ))}
               </Select>
             </Field>
-            <Field label="Chapter" required>
+            <Field label="Chapter">
               <TextInput
                 value={draft.chapter}
                 placeholder="Chapter 4 — Quadratic Equations"
                 onChange={(e) => setDraft({ ...draft, chapter: e.target.value })}
               />
             </Field>
-            <Field label="Topic" required>
+            <Field label="Topic">
               <TextInput
                 value={draft.topic}
                 placeholder="Solving by factorisation"
@@ -234,7 +258,7 @@ function TeacherHomework() {
           </div>
 
           <div className="mt-4">
-            <Field label="Instructions">
+            <Field label="Homework description" required>
               <TextArea
                 value={draft.description}
                 placeholder="What should students do? Mention page numbers, exercises, expectations…"
@@ -308,7 +332,7 @@ function TeacherHomework() {
 
       <SectionCard
         title="Assigned homework"
-        description={`${list.length} item${list.length === 1 ? "" : "s"} for Grade IX-B`}
+        description={`${list.length} item${list.length === 1 ? "" : "s"} for Grade ${className ? `${className.grade}-${className.section}` : "—"}`}
         actions={
           <Select value={filter} onChange={(e) => setFilter(e.target.value)} className="w-auto">
             <option value="all">All</option>
