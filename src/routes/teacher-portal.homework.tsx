@@ -378,7 +378,7 @@ function TeacherHomework() {
                         )}
                       </div>
                       <p className="mt-1 text-sm font-semibold tracking-tight">
-                        {h.chapter} · {h.topic}
+                        {[h.chapter, h.topic].filter(Boolean).join(" · ") || h.subject}
                       </p>
                       {h.description && (
                         <p className="mt-1 line-clamp-2 text-xs text-[color:var(--ink-soft)]">{h.description}</p>
@@ -386,9 +386,9 @@ function TeacherHomework() {
                       <div className="mt-2 flex flex-wrap items-center gap-3 text-[11px] text-[color:var(--ink-soft)]">
                         <span className="inline-flex items-center gap-1">
                           <CalendarClock className="h-3 w-3" />
-                          Due {h.due_date ? new Date(h.due_date).toLocaleDateString() : "—"}
+                          Due {h.due_date ? new Date(h.due_date + "T00:00:00").toLocaleDateString() : "—"}
                         </span>
-                        {h.scheduled_for && <span>Scheduled {new Date(h.scheduled_for).toLocaleDateString()}</span>}
+                        {h.scheduled_for && <span>Scheduled {new Date(h.scheduled_for + "T00:00:00").toLocaleDateString()}</span>}
                         {sub && (
                           <span>
                             {sub.submitted}/{sub.total} submitted

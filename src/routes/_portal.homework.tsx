@@ -36,8 +36,13 @@ export const Route = createFileRoute("/_portal/homework")({
   component: HomeworkPage,
 });
 
+function todayIso() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 function dayKey(due: string | null) {
-  return due ? new Date(due).toDateString() : "no-date";
+  return due ? new Date(due + "T00:00:00").toDateString() : "no-date";
 }
 
 function dayLabel(d: Date) {
@@ -79,7 +84,7 @@ function dueLabel(due: string | null) {
   if (!due) return "—";
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const day = new Date(due);
+  const day = new Date(due + "T00:00:00");
   day.setHours(0, 0, 0, 0);
   const diff = Math.round((+day - +today) / 86_400_000);
   if (diff === 0) return "Due today";
@@ -103,7 +108,7 @@ function HomeworkPage() {
     enabled: !!student,
   });
   const targetsQ = useQuery({
-    queryKey: ["school", "homework-targets", (hwQ.data ?? []).length],
+    queryKey: ["school", "homework-targets", student?.id ?? "none", (hwQ.data ?? []).length],
     queryFn: () => listHomeworkTargets((hwQ.data ?? []).map((h) => h.id)),
     enabled: !!hwQ.data?.length,
   });
@@ -114,7 +119,10 @@ function HomeworkPage() {
       (targetsQ.data ?? []).filter((t) => t.student_id === student?.id).map((t) => t.homework_id),
     );
     return (hwQ.data ?? []).filter(
-      (h) => h.status !== "draft" && (h.assign_all || targeted.has(h.id)),
+      (h) =>
+        h.status !== "draft" &&
+        (!h.scheduled_for || h.scheduled_for <= todayIso()) &&
+        (h.assign_all || targeted.has(h.id)),
     );
   }, [hwQ.data, targetsQ.data, student?.id]);
 
