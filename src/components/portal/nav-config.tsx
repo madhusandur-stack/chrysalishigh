@@ -48,7 +48,7 @@ export const dockNav: NavItem[] = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/homework", label: "Homework", icon: BookOpen },
   { to: "/attendance", label: "Attendance", icon: CalendarCheck },
-  { to: "/diary", label: "Diary", icon: NotebookPen },
+  { to: "/noticeboard", label: "Noticeboard", icon: Megaphone },
 ];
 
 export const teacherNav: NavItem[] = [
