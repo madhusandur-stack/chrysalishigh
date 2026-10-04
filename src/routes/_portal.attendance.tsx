@@ -1,11 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
-import { CalendarCheck } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { CalendarCheck, ChevronLeft, ChevronRight } from "lucide-react";
 import { Page, PageHeader } from "@/components/portal/page";
-import { CountUp } from "@/components/portal/count-up";
 import {
   EmptyState,
   ErrorState,
@@ -25,10 +22,10 @@ export const Route = createFileRoute("/_portal/attendance")({
       { title: "Attendance — Chrysalis Connect" },
       {
         name: "description",
-        content: "Daily attendance record with monthly breakdown, overall percentage and recent history.",
+        content: "Your daily attendance record: overall percentage, monthly calendar and date-wise history.",
       },
       { property: "og:title", content: "Attendance — Chrysalis Connect" },
-      { property: "og:description", content: "Track presence month by month across the academic year." },
+      { property: "og:description", content: "Daily attendance calendar and history for students." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -36,24 +33,50 @@ export const Route = createFileRoute("/_portal/attendance")({
   component: AttendancePage,
 });
 
-const MONTH_LABEL = (key: string) =>
-  new Date(`${key}-01T00:00:00Z`).toLocaleDateString(undefined, { month: "short", timeZone: "UTC" });
+/** Statuses that mean the school was closed — never counted as absent. */
+const NON_SCHOOL = new Set(["holiday", "non_school", "weekend"]);
+const ATTENDED = new Set(["present", "late"]);
 
-type MonthRow = { key: string; month: string; present: number; absent: number; late: number };
+type Kind = "present" | "late" | "absent" | "leave" | "holiday" | "weekend" | "unmarked" | "future";
 
-/** Groups raw attendance days into per-month present/absent/late counts. */
-function groupByMonth(rows: AttendanceDay[]): MonthRow[] {
-  const map = new Map<string, MonthRow>();
-  for (const r of rows) {
-    const key = r.date.slice(0, 7);
-    const entry = map.get(key) ?? { key, month: MONTH_LABEL(key), present: 0, absent: 0, late: 0 };
-    if (r.status === "present") entry.present += 1;
-    else if (r.status === "late") entry.late += 1;
-    else entry.absent += 1;
-    map.set(key, entry);
+function classify(status: string | undefined, date: Date, today: Date): Kind {
+  if (status) {
+    const s = status.toLowerCase();
+    if (NON_SCHOOL.has(s)) return "holiday";
+    if (s === "present" || s === "late" || s === "leave") return s;
+    return "absent";
   }
-  return [...map.values()].sort((a, b) => a.key.localeCompare(b.key));
+  if (date > today) return "future";
+  const dow = date.getDay();
+  if (dow === 0 || dow === 6) return "weekend";
+  return "unmarked";
 }
+
+const KIND_STYLE: Record<Kind, string> = {
+  present: "bg-[color:var(--emerald)]/15 text-[color:var(--emerald)] border-[color:var(--emerald)]/30",
+  late: "bg-[color:var(--violet)]/15 text-[color:var(--violet)] border-[color:var(--violet)]/30",
+  absent: "bg-[color:var(--ember)]/15 text-[color:var(--ember)] border-[color:var(--ember)]/30",
+  leave: "bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/30",
+  holiday: "bg-paper-2 text-[color:var(--ink-soft)] border-dashed border-[color:var(--line)]",
+  weekend: "text-[color:var(--ink-soft)]/60 border-transparent",
+  unmarked: "text-[color:var(--ink-soft)] border-[color:var(--line)]",
+  future: "text-[color:var(--ink-soft)]/50 border-transparent",
+};
+
+const KIND_LABEL: Record<Kind, string> = {
+  present: "Present",
+  late: "Late",
+  absent: "Absent",
+  leave: "Leave",
+  holiday: "Holiday",
+  weekend: "Weekend",
+  unmarked: "Not marked",
+  future: "",
+};
+
+const parseLocal = (d: string) => new Date(`${d}T00:00:00`);
+const ymd = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
 function AttendancePage() {
   const meQ = useQuery({ queryKey: qk.mine, queryFn: getMyIdentity, staleTime: 300_000 });
@@ -65,117 +88,102 @@ function AttendancePage() {
     enabled: !!student,
   });
 
-  const rows = attQ.data ?? [];
-  const monthly = useMemo(() => groupByMonth(rows), [rows]);
+  const rows: AttendanceDay[] = attQ.data ?? [];
+  const byDate = useMemo(() => new Map(rows.map((r) => [r.date, r.status])), [rows]);
 
   const totals = useMemo(() => {
-    const t = { present: 0, absent: 0, late: 0 };
-    for (const m of monthly) {
-      t.present += m.present;
-      t.absent += m.absent;
-      t.late += m.late;
+    const t = { present: 0, late: 0, absent: 0, leave: 0, holiday: 0 };
+    for (const r of rows) {
+      const s = r.status.toLowerCase();
+      if (NON_SCHOOL.has(s)) t.holiday++;
+      else if (s === "present") t.present++;
+      else if (s === "late") t.late++;
+      else if (s === "leave") t.leave++;
+      else t.absent++;
     }
     return t;
-  }, [monthly]);
+  }, [rows]);
 
-  const recorded = totals.present + totals.absent + totals.late;
-  const overall = recorded ? Math.round(((totals.present + totals.late) / recorded) * 100) : 0;
-  const recent = rows.slice(0, 12);
-  const loading = meQ.isLoading || attQ.isLoading;
+  const schoolDays = totals.present + totals.late + totals.absent + totals.leave;
+  const attended = rows.filter((r) => ATTENDED.has(r.status.toLowerCase())).length;
+  const pct = schoolDays ? (attended / schoolDays) * 100 : 0;
+
+  // Month navigation: start at the latest recorded month (or current month).
+  const [cursor, setCursor] = useState<Date | null>(null);
+  useEffect(() => {
+    if (cursor || attQ.isLoading) return;
+    const base = rows[0] ? parseLocal(rows[0].date) : new Date();
+    setCursor(new Date(base.getFullYear(), base.getMonth(), 1));
+  }, [rows, attQ.isLoading, cursor]);
+
+  const loading = meQ.isLoading || (!!student && attQ.isLoading);
+  const header = <PageHeader title="Attendance" subtitle={`Daily attendance · Academic year ${ACADEMIC_YEAR}`} />;
 
   if (loading) {
     return (
       <Page>
-        <PageHeader title="Attendance" subtitle="Your presence, month by month." />
+        {header}
         <LoadingRows rows={4} height={110} />
       </Page>
     );
   }
-
-  if (attQ.isError) {
+  if (meQ.isError || attQ.isError) {
+    const err = (meQ.error ?? attQ.error) as Error;
     return (
       <Page>
-        <PageHeader title="Attendance" subtitle="Your presence, month by month." />
-        <ErrorState message={(attQ.error as Error)?.message} onRetry={() => void attQ.refetch()} />
+        {header}
+        <ErrorState message={err?.message} onRetry={() => void (meQ.isError ? meQ.refetch() : attQ.refetch())} />
+      </Page>
+    );
+  }
+  if (!student) {
+    return (
+      <Page>
+        {header}
+        <EmptyState
+          icon={CalendarCheck}
+          title="No student record linked"
+          description="Your account isn't linked to a student record yet. Please contact the school office."
+        />
       </Page>
     );
   }
 
   return (
     <Page>
-      <PageHeader title="Attendance" subtitle="Your presence, month by month." />
+      {header}
 
-      {recorded === 0 ? (
+      {rows.length === 0 ? (
         <EmptyState
           icon={CalendarCheck}
           title="No attendance recorded yet"
-          description="Once your class teacher starts marking the register, your record appears here."
+          description="Once your class teacher starts marking the register, your daily record appears here."
         />
       ) : (
         <>
-          <div className="grid gap-4 lg:grid-cols-3">
-            <div className="card-surface flex items-center gap-6 p-6 lg:col-span-1">
-              <Ring value={overall} />
-              <div>
-                <div className="text-[11px] uppercase tracking-wider text-[color:var(--ink-soft)]">Overall</div>
-                <div className="mono mt-1 text-[40px] font-semibold leading-none">
-                  <CountUp to={overall} suffix="%" />
-                </div>
-                <div className="mt-2 text-xs text-[color:var(--ink-soft)]">Academic year {ACADEMIC_YEAR}</div>
-              </div>
-            </div>
-
-            <div className="card-surface p-6 lg:col-span-2">
-              <div className="mb-4 text-[11px] font-medium uppercase tracking-wider text-[color:var(--ink-soft)]">
-                Monthly breakdown
-              </div>
-              <div className="h-[240px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={monthly} barGap={4}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" vertical={false} />
-                    <XAxis
-                      dataKey="month"
-                      tickLine={false}
-                      axisLine={false}
-                      tick={{ fill: "var(--ink-soft)", fontSize: 12 }}
-                    />
-                    <YAxis
-                      tickLine={false}
-                      axisLine={false}
-                      tick={{ fill: "var(--ink-soft)", fontSize: 12 }}
-                      width={28}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        borderRadius: 12,
-                        border: "1px solid var(--line)",
-                        background: "var(--paper)",
-                        fontSize: 12,
-                      }}
-                    />
-                    <Bar dataKey="present" fill="var(--emerald)" radius={[6, 6, 0, 0]} />
-                    <Bar dataKey="absent" fill="var(--ember)" radius={[6, 6, 0, 0]} />
-                    <Bar dataKey="late" fill="var(--violet)" radius={[6, 6, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-3 flex flex-wrap gap-4 text-xs text-[color:var(--ink-soft)]">
-                <Legend color="var(--emerald)" label="Present" />
-                <Legend color="var(--ember)" label="Absent" />
-                <Legend color="var(--violet)" label="Late" />
-              </div>
-            </div>
+          {/* Summary */}
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <StatCard label="Overall attendance" value={`${pct.toFixed(1)}%`} />
+            <StatCard label="Present days" value={attended} />
+            <StatCard label="Absent days" value={totals.absent + totals.leave} tone="danger" />
+            <StatCard label="School days recorded" value={schoolDays} />
           </div>
+          <p className="mt-2 text-xs text-[color:var(--ink-soft)]">
+            Percentage = days attended (present + late) ÷ school days marked. Holidays and weekends are not counted.
+            {totals.late > 0 && ` Includes ${totals.late} late arrival${totals.late > 1 ? "s" : ""}.`}
+            {totals.leave > 0 && ` ${totals.leave} leave day${totals.leave > 1 ? "s" : ""} counted as absent.`}
+          </p>
 
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <StatCard label="Days recorded" value={recorded} />
-            <StatCard label="Present" value={totals.present} />
-            <StatCard label="Late" value={totals.late} />
-            <StatCard label="Absent" value={totals.absent} tone="danger" />
-          </div>
+          {/* Calendar */}
+          {cursor && (
+            <div className="mt-6">
+              <MonthCalendar cursor={cursor} setCursor={setCursor} byDate={byDate} />
+            </div>
+          )}
 
+          {/* History */}
           <div className="mt-6">
-            <SectionCard title="Recent days" description="Your last twelve marked days.">
+            <SectionCard title="Attendance history" description="Every day marked by your class teacher, newest first.">
               <TableWrap>
                 <thead>
                   <tr>
@@ -185,8 +193,9 @@ function AttendancePage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {recent.map((r) => {
-                    const d = new Date(`${r.date}T00:00:00`);
+                  {rows.map((r) => {
+                    const d = parseLocal(r.date);
+                    const k = classify(r.status, d, new Date());
                     return (
                       <tr key={r.id}>
                         <Td className="font-medium">
@@ -194,7 +203,9 @@ function AttendancePage() {
                         </Td>
                         <Td>{d.toLocaleDateString(undefined, { weekday: "long" })}</Td>
                         <Td>
-                          <StatusPill status={r.status}>{r.status.replace("_", " ")}</StatusPill>
+                          <StatusPill status={k === "holiday" ? "draft" : r.status.toLowerCase()}>
+                            {KIND_LABEL[k]}
+                          </StatusPill>
                         </Td>
                       </tr>
                     );
@@ -209,35 +220,89 @@ function AttendancePage() {
   );
 }
 
-function Legend({ color, label }: { color: string; label: string }) {
-  return (
-    <div className="flex items-center gap-1.5">
-      <span className="h-2.5 w-2.5 rounded-sm" style={{ background: color }} />
-      {label}
-    </div>
-  );
-}
+function MonthCalendar({
+  cursor,
+  setCursor,
+  byDate,
+}: {
+  cursor: Date;
+  setCursor: (d: Date) => void;
+  byDate: Map<string, string>;
+}) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const year = cursor.getFullYear();
+  const month = cursor.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const lead = (new Date(year, month, 1).getDay() + 6) % 7; // Monday-first
 
-function Ring({ value }: { value: number }) {
-  const r = 52;
-  const c = 2 * Math.PI * r;
+  const cells: (Date | null)[] = [
+    ...Array.from({ length: lead }, () => null),
+    ...Array.from({ length: daysInMonth }, (_, i) => new Date(year, month, i + 1)),
+  ];
+
+  const counts = { present: 0, late: 0, absent: 0, leave: 0, holiday: 0 };
+  for (const d of cells) {
+    if (!d) continue;
+    const k = classify(byDate.get(ymd(d)), d, today);
+    if (k in counts) counts[k as keyof typeof counts]++;
+  }
+
   return (
-    <svg width="140" height="140" viewBox="0 0 140 140" className="shrink-0" aria-hidden="true">
-      <circle cx="70" cy="70" r={r} strokeWidth="10" className="stroke-[color:var(--line)]" fill="none" />
-      <motion.circle
-        cx="70"
-        cy="70"
-        r={r}
-        strokeWidth="10"
-        fill="none"
-        strokeLinecap="round"
-        className="stroke-[color:var(--emerald)]"
-        transform="rotate(-90 70 70)"
-        strokeDasharray={c}
-        initial={{ strokeDashoffset: c }}
-        animate={{ strokeDashoffset: c - (c * value) / 100 }}
-        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-      />
-    </svg>
+    <SectionCard
+      title={cursor.toLocaleDateString(undefined, { month: "long", year: "numeric" })}
+      description={`Present ${counts.present + counts.late} · Absent ${counts.absent + counts.leave} · Holidays ${counts.holiday}`}
+      actions={
+        <div className="flex gap-1">
+          <button
+            aria-label="Previous month"
+            onClick={() => setCursor(new Date(year, month - 1, 1))}
+            className="grid h-9 w-9 place-items-center rounded-[10px] border border-[color:var(--line)] hover:bg-paper-2"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <button
+            aria-label="Next month"
+            onClick={() => setCursor(new Date(year, month + 1, 1))}
+            className="grid h-9 w-9 place-items-center rounded-[10px] border border-[color:var(--line)] hover:bg-paper-2"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+      }
+    >
+      <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-medium uppercase tracking-wider text-[color:var(--ink-soft)]">
+        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
+          <div key={d} className="py-1">
+            {d}
+          </div>
+        ))}
+      </div>
+      <div className="mt-1 grid grid-cols-7 gap-1">
+        {cells.map((d, i) => {
+          if (!d) return <div key={i} />;
+          const k = classify(byDate.get(ymd(d)), d, today);
+          return (
+            <div
+              key={i}
+              title={KIND_LABEL[k] || undefined}
+              className={`flex aspect-square flex-col items-center justify-center rounded-[10px] border text-sm sm:aspect-auto sm:h-16 ${KIND_STYLE[k]}`}
+            >
+              <span className="mono font-medium">{d.getDate()}</span>
+              {k !== "future" && k !== "weekend" && (
+                <span className="hidden text-[10px] sm:block">{KIND_LABEL[k]}</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2 text-xs">
+        {(["present", "late", "absent", "leave", "holiday", "unmarked"] as Kind[]).map((k) => (
+          <span key={k} className={`rounded-full border px-2.5 py-1 ${KIND_STYLE[k]}`}>
+            {KIND_LABEL[k]}
+          </span>
+        ))}
+      </div>
+    </SectionCard>
   );
 }
