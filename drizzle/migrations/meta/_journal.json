@@ -8,6 +8,13 @@
       "when": 1791020358997,
       "tag": "0000_homework_visibility_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791090225425,
+      "tag": "0001_scope_student_attendance_days",
+      "breakpoints": true
     }
   ]
 }
