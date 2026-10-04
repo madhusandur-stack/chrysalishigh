@@ -252,7 +252,7 @@ function MonthCalendar({
     <SectionCard
       title={cursor.toLocaleDateString(undefined, { month: "long", year: "numeric" })}
       description={`Present ${counts.present + counts.late} · Absent ${counts.absent + counts.leave} · Holidays ${counts.holiday}`}
-      action={
+      actions={
         <div className="flex gap-1">
           <button
             aria-label="Previous month"
