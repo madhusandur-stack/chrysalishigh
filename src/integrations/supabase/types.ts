@@ -121,6 +121,7 @@ export type Database = {
           id: string
           life_skills: string | null
           participation: string | null
+          published_at: string | null
           student_id: string
           term: string
           updated_at: string
@@ -136,6 +137,7 @@ export type Database = {
           id?: string
           life_skills?: string | null
           participation?: string | null
+          published_at?: string | null
           student_id: string
           term: string
           updated_at?: string
@@ -151,6 +153,7 @@ export type Database = {
           id?: string
           life_skills?: string | null
           participation?: string | null
+          published_at?: string | null
           student_id?: string
           term?: string
           updated_at?: string
@@ -176,6 +179,7 @@ export type Database = {
           fa3: number | null
           fa4: number | null
           id: string
+          published_at: string | null
           sa1: number | null
           sa2: number | null
           student_id: string
@@ -191,6 +195,7 @@ export type Database = {
           fa3?: number | null
           fa4?: number | null
           id?: string
+          published_at?: string | null
           sa1?: number | null
           sa2?: number | null
           student_id: string
@@ -206,6 +211,7 @@ export type Database = {
           fa3?: number | null
           fa4?: number | null
           id?: string
+          published_at?: string | null
           sa1?: number | null
           sa2?: number | null
           student_id?: string

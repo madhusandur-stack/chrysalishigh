@@ -15,6 +15,13 @@
       "when": 1791090225425,
       "tag": "0001_scope_student_attendance_days",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791306303556,
+      "tag": "0002_scope_academic_records",
+      "breakpoints": true
     }
   ]
 }
