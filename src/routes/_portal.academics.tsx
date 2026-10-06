@@ -100,7 +100,7 @@ function AcademicsPage() {
   const years = useMemo(() => {
     const s = new Set<string>();
     [...sch, ...co].forEach((r) => s.add(r.academic_year));
-    cards.forEach((c) => s.add(c.academic_year));
+    cards.forEach((c) => s.add((c as { academic_year?: string }).academic_year ?? ""));
     pupa.forEach((p) => s.add(p.academic_year));
     return [...s].sort().reverse();
   }, [sch, co, cards, pupa]);
@@ -112,7 +112,7 @@ function AcademicsPage() {
 
   const yearSch = sch.filter((r) => r.academic_year === year);
   const yearCo = co.filter((r) => r.academic_year === year);
-  const yearCards = cards.filter((c) => c.academic_year === year);
+  const yearCards = cards.filter((c) => (c as { academic_year?: string }).academic_year === year);
   const yearPupa = pupa.filter((p) => p.academic_year === year);
   const terms = [...new Set([...yearSch, ...yearCo].map((r) => r.term)), ...yearCards.map((c) => c.term)]
     .filter((t, i, a) => a.indexOf(t) === i)
