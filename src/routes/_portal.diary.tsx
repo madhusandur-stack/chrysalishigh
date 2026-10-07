@@ -1,30 +1,17 @@
 import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
-import { BookOpen, Download, FileText, Megaphone, NotebookPen, Printer } from "lucide-react";
+import { BookOpen, Download, FileText, Megaphone, NotebookPen } from "lucide-react";
 import { Page, PageHeader } from "@/components/portal/page";
+import { AttachmentList, EmptyState, ErrorState, LoadingRows } from "@/components/portal/ui-kit";
 import {
-  AttachmentList,
-  EmptyState,
-  ErrorState,
-  GhostButton,
-  LoadingRows,
-  SectionCard,
-  StatCard,
-  StatusPill,
-} from "@/components/portal/ui-kit";
-import {
-  ACADEMIC_YEAR,
   getMyIdentity,
-  gradeFor,
-  listHomework,
-  listHomeworkTargets,
   listNotices,
   listPupa,
   listReportCards,
   noticesForStudent,
   qk,
+  type Attachment,
 } from "@/lib/school-api";
 
 export const Route = createFileRoute("/_portal/diary")({
@@ -33,14 +20,10 @@ export const Route = createFileRoute("/_portal/diary")({
       { title: "Diary — Chrysalis Connect" },
       {
         name: "description",
-        content:
-          "Your school diary: report cards, assigned homework, notices from teachers and admin, and published PUPA progress notes.",
+        content: "A dated record of notices, teacher progress notes and published report cards.",
       },
       { property: "og:title", content: "Diary — Chrysalis Connect" },
-      {
-        property: "og:description",
-        content: "Report cards, homework, notices and PUPA progress notes in one place.",
-      },
+      { property: "og:description", content: "Notices, progress notes and report cards in date order." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -48,14 +31,26 @@ export const Route = createFileRoute("/_portal/diary")({
   component: DiaryPage,
 });
 
-const TABS = [
-  { key: "report-cards", label: "Report cards", icon: FileText },
-  { key: "homework", label: "Homework", icon: BookOpen },
-  { key: "notices", label: "Notices", icon: Megaphone },
-  { key: "pupa", label: "PUPA summary", icon: NotebookPen },
-] as const;
+type Kind = "notice" | "pupa" | "report";
+type Entry = {
+  id: string;
+  kind: Kind;
+  at: Date;
+  title: string;
+  by: string;
+  body?: string | null;
+  fields?: [string, string][];
+  attachments?: Attachment[];
+  fileUrl?: string | null;
+};
 
-type TabKey = (typeof TABS)[number]["key"];
+const FILTERS: { key: Kind | "all"; label: string; icon?: typeof Megaphone }[] = [
+  { key: "all", label: "All" },
+  { key: "notice", label: "Notices", icon: Megaphone },
+  { key: "pupa", label: "Progress notes", icon: NotebookPen },
+  { key: "report", label: "Report cards", icon: FileText },
+];
+const KIND_LABEL: Record<Kind, string> = { notice: "Notice", pupa: "Progress note", report: "Report card" };
 
 const PUPA_FIELDS = [
   ["strengths", "Strengths"],
@@ -65,13 +60,11 @@ const PUPA_FIELDS = [
   ["remarks", "Teacher's remarks"],
 ] as const;
 
-function fmtDate(value?: string | null) {
-  if (!value) return "—";
-  return new Date(value).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
-}
+const toDate = (v: string) => new Date(v.length === 10 ? `${v}T00:00:00` : v);
+const dayKey = (d: Date) => d.toDateString();
 
 function DiaryPage() {
-  const [tab, setTab] = useState<TabKey>("report-cards");
+  const [filter, setFilter] = useState<Kind | "all">("all");
 
   const meQ = useQuery({ queryKey: qk.mine, queryFn: getMyIdentity, staleTime: 300_000 });
   const student = meQ.data?.student ?? null;
@@ -81,263 +74,166 @@ function DiaryPage() {
     queryFn: () => listReportCards(student!.id),
     enabled: !!student,
   });
-  const pupaQ = useQuery({
-    queryKey: qk.pupa(student?.id),
-    queryFn: () => listPupa(student!.id),
-    enabled: !!student,
-  });
-  const hwQ = useQuery({
-    queryKey: [...qk.homework, student?.class_id],
-    queryFn: () => listHomework(student!.class_id),
-    enabled: !!student,
-  });
-  const targetsQ = useQuery({
-    queryKey: ["school", "homework-targets", student?.class_id],
-    queryFn: () => listHomeworkTargets((hwQ.data ?? []).map((h) => h.id)),
-    enabled: !!student && !!hwQ.data?.length,
-  });
-  const noticesQ = useQuery({ queryKey: qk.notices, queryFn: listNotices });
+  const pupaQ = useQuery({ queryKey: qk.pupa(student?.id), queryFn: () => listPupa(student!.id), enabled: !!student });
+  const noticesQ = useQuery({ queryKey: qk.notices, queryFn: listNotices, enabled: !!student });
 
-  const cards = cardsQ.data ?? [];
-  /** Drafts stay with the teacher; families only ever see finalised PUPA reports. */
-  const pupa = useMemo(() => (pupaQ.data ?? []).filter((p) => p.status === "final"), [pupaQ.data]);
-
-  const homework = useMemo(() => {
-    const items = hwQ.data ?? [];
-    const targets = targetsQ.data ?? [];
+  const entries = useMemo<Entry[]>(() => {
     if (!student) return [];
-    return items.filter(
-      (h) => h.assign_all || targets.some((t) => t.homework_id === h.id && t.student_id === student.id),
-    );
-  }, [hwQ.data, targetsQ.data, student]);
+    const now = new Date();
+    const out: Entry[] = [];
 
-  const notices = useMemo(
-    () => noticesForStudent(noticesQ.data ?? [], student),
-    [noticesQ.data, student],
-  );
+    // Only notices that have actually gone out (not scheduled for later).
+    for (const n of noticesForStudent(noticesQ.data ?? [], student)) {
+      if (!n.published_at || toDate(n.published_at) > now) continue;
+      out.push({
+        id: `n-${n.id}`,
+        kind: "notice",
+        at: toDate(n.published_at),
+        title: n.title,
+        by: n.author_name ?? "School office",
+        body: n.body,
+        attachments: n.attachments ?? [],
+      });
+    }
+    // Only final PUPA reports — drafts stay with the teacher.
+    for (const p of pupaQ.data ?? []) {
+      if (p.status !== "final") continue;
+      const when = p.submitted_at ?? p.updated_at;
+      if (!when) continue;
+      out.push({
+        id: `p-${p.id}`,
+        kind: "pupa",
+        at: toDate(when),
+        title: `${p.term} progress note · ${p.academic_year}`,
+        by: "Class teacher",
+        fields: PUPA_FIELDS.filter(([k]) => p[k]).map(([k, l]) => [l, p[k] as string]),
+      });
+    }
+    for (const c of cardsQ.data ?? []) {
+      if (!c.published_on || toDate(c.published_on) > now) continue;
+      out.push({
+        id: `r-${c.id}`,
+        kind: "report",
+        at: toDate(c.published_on),
+        title: `${c.term} report card`,
+        by: "School",
+        body: [c.percentage != null ? `${c.percentage}%` : null, c.overall_grade].filter(Boolean).join(" · ") || null,
+        fileUrl: c.file_url,
+      });
+    }
+    return out.sort((a, b) => +b.at - +a.at);
+  }, [student, noticesQ.data, pupaQ.data, cardsQ.data]);
 
-  const loading = meQ.isLoading;
+  const shown = filter === "all" ? entries : entries.filter((e) => e.kind === filter);
+  const groups = useMemo(() => {
+    const m = new Map<string, Entry[]>();
+    for (const e of shown) m.set(dayKey(e.at), [...(m.get(dayKey(e.at)) ?? []), e]);
+    return [...m.values()];
+  }, [shown]);
+
+  const loading =
+    meQ.isLoading || (!!student && (cardsQ.isLoading || pupaQ.isLoading || noticesQ.isLoading));
+  const err = meQ.error ?? cardsQ.error ?? pupaQ.error ?? noticesQ.error;
 
   return (
     <Page>
-      <PageHeader
-        title="Diary"
-        subtitle={`Report cards, homework, notices and progress notes for ${ACADEMIC_YEAR}.`}
-      />
+      <PageHeader title="Diary" subtitle="Notices, progress notes and report cards, newest first." />
 
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatCard label="Report cards" value={cards.length} />
-        <StatCard label="Homework" value={homework.length} />
-        <StatCard label="Notices" value={notices.length} />
-        <StatCard label="Progress notes" value={pupa.length} />
-      </div>
-
-      <div className="mb-6 flex flex-wrap gap-2 print:hidden">
-        {TABS.map((t) => {
-          const Icon = t.icon;
-          const active = tab === t.key;
+      <div className="mb-5 flex flex-wrap items-center gap-2">
+        {FILTERS.map((f) => {
+          const active = filter === f.key;
           return (
             <button
-              key={t.key}
+              key={f.key}
               type="button"
-              onClick={() => setTab(t.key)}
+              onClick={() => setFilter(f.key)}
               aria-pressed={active}
-              className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition ${
+              className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm transition ${
                 active
                   ? "border-[color:var(--signal)] bg-[color:var(--signal)]/10 text-[color:var(--signal)]"
                   : "border-line text-[color:var(--ink-soft)] hover:text-[color:var(--ink)]"
               }`}
             >
-              <Icon className="h-4 w-4" />
-              {t.label}
+              {f.icon && <f.icon className="h-3.5 w-3.5" />}
+              {f.label}
             </button>
           );
         })}
+        <Link
+          to="/homework"
+          className="ml-auto inline-flex items-center gap-1.5 text-sm text-[color:var(--ink-soft)] hover:text-[color:var(--ink)]"
+        >
+          <BookOpen className="h-4 w-4" /> Homework
+        </Link>
       </div>
 
       {loading ? (
-        <LoadingRows rows={3} height={110} />
+        <LoadingRows rows={4} height={70} />
+      ) : err ? (
+        <ErrorState message={(err as Error).message} onRetry={() => void meQ.refetch()} />
+      ) : !student ? (
+        <EmptyState
+          icon={NotebookPen}
+          title="No student record linked"
+          description="Your account isn't linked to a student record yet. Please contact the school office."
+        />
+      ) : groups.length === 0 ? (
+        <EmptyState
+          icon={NotebookPen}
+          title="Nothing in your diary yet"
+          description="Notices, your class teacher's progress notes and report cards appear here as the school publishes them."
+        />
       ) : (
-        <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-          {tab === "report-cards" && (
-            <ReportCardsTab
-              cards={cards}
-              loading={cardsQ.isLoading}
-              error={cardsQ.isError ? (cardsQ.error as Error)?.message : undefined}
-              onRetry={() => void cardsQ.refetch()}
-            />
-          )}
-
-          {tab === "homework" && (
-            <>
-              {hwQ.isLoading ? (
-                <LoadingRows rows={3} height={100} />
-              ) : hwQ.isError ? (
-                <ErrorState message={(hwQ.error as Error)?.message} onRetry={() => void hwQ.refetch()} />
-              ) : homework.length === 0 ? (
-                <EmptyState
-                  icon={BookOpen}
-                  title="No homework assigned"
-                  description="Work set by your teachers will show up here with due dates and attachments."
-                />
-              ) : (
-                <div className="grid gap-4 lg:grid-cols-2">
-                  {homework.map((h) => (
-                    <SectionCard
-                      key={h.id}
-                      title={`${h.subject}${h.topic ? ` · ${h.topic}` : ""}`}
-                      description={[h.chapter, h.due_date ? `Due ${fmtDate(h.due_date)}` : null]
-                        .filter(Boolean)
-                        .join(" · ")}
-                    >
-                      {h.description ? (
-                        <p className="text-sm leading-relaxed text-[color:var(--ink-soft)]">{h.description}</p>
-                      ) : null}
-                      <AttachmentList items={h.attachments ?? []} />
-                    </SectionCard>
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-
-          {tab === "notices" && (
-            <>
-              {noticesQ.isLoading ? (
-                <LoadingRows rows={3} height={100} />
-              ) : noticesQ.isError ? (
-                <ErrorState
-                  message={(noticesQ.error as Error)?.message}
-                  onRetry={() => void noticesQ.refetch()}
-                />
-              ) : notices.length === 0 ? (
-                <EmptyState
-                  icon={Megaphone}
-                  title="No notices yet"
-                  description="Announcements from your teachers and the school office appear here."
-                />
-              ) : (
-                <div className="grid gap-4 lg:grid-cols-2">
-                  {notices.map((n) => (
-                    <SectionCard
-                      key={n.id}
-                      title={n.title}
-                      description={`${n.author_name ?? "School"} · ${fmtDate(n.published_at)}`}
-                      actions={n.pinned ? <StatusPill status="pinned">Pinned</StatusPill> : null}
-                    >
-                      {n.body ? (
-                        <p className="whitespace-pre-line text-sm leading-relaxed text-[color:var(--ink-soft)]">
-                          {n.body}
-                        </p>
-                      ) : null}
-                      <AttachmentList items={n.attachments ?? []} />
-                    </SectionCard>
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-
-          {tab === "pupa" && (
-            <>
-              {pupaQ.isLoading ? (
-                <LoadingRows rows={2} height={120} />
-              ) : pupa.length === 0 ? (
-                <EmptyState
-                  icon={NotebookPen}
-                  title="No progress notes published"
-                  description="Your class teacher's PUPA report becomes visible once it is submitted as final."
-                />
-              ) : (
-                <div className="grid gap-4 lg:grid-cols-2">
-                  {pupa.map((p) => (
-                    <SectionCard
-                      key={p.id}
-                      title={p.term}
-                      description={`Shared by your class teacher · ${fmtDate(p.submitted_at)}`}
-                    >
-                      <dl className="space-y-3">
-                        {PUPA_FIELDS.filter(([key]) => p[key]).map(([key, label]) => (
-                          <div key={key}>
-                            <dt className="mono text-[10px] uppercase tracking-[0.14em] text-[color:var(--ink-soft)]">
-                              {label}
-                            </dt>
-                            <dd className="mt-1 text-sm leading-relaxed">{p[key]}</dd>
+        <div className="card-surface divide-y divide-[color:var(--line)]">
+          {groups.map((g) => (
+            <section key={dayKey(g[0].at)} className="grid gap-3 p-4 sm:grid-cols-[140px_1fr] sm:p-5">
+              <div className="text-sm font-semibold">
+                {g[0].at.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" })}
+                <div className="text-xs font-normal text-[color:var(--ink-soft)]">{g[0].at.getFullYear()}</div>
+              </div>
+              <div className="space-y-4">
+                {g.map((e) => (
+                  <article key={e.id}>
+                    <div className="flex flex-wrap items-baseline gap-x-2">
+                      <span className="text-[11px] font-medium uppercase tracking-wider text-[color:var(--signal)]">
+                        {KIND_LABEL[e.kind]}
+                      </span>
+                      <h3 className="font-medium">{e.title}</h3>
+                      <span className="text-xs text-[color:var(--ink-soft)]">· {e.by}</span>
+                    </div>
+                    {e.body && (
+                      <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-[color:var(--ink-soft)]">
+                        {e.body}
+                      </p>
+                    )}
+                    {e.fields && e.fields.length > 0 && (
+                      <dl className="mt-2 space-y-2">
+                        {e.fields.map(([l, v]) => (
+                          <div key={l}>
+                            <dt className="text-xs text-[color:var(--ink-soft)]">{l}</dt>
+                            <dd className="text-sm leading-relaxed">{v}</dd>
                           </div>
                         ))}
                       </dl>
-                    </SectionCard>
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-        </motion.div>
+                    )}
+                    {e.attachments && e.attachments.length > 0 && <AttachmentList items={e.attachments} />}
+                    {e.fileUrl && (
+                      <a
+                        href={e.fileUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-[color:var(--signal)]"
+                      >
+                        <Download className="h-4 w-4" /> View / download
+                      </a>
+                    )}
+                  </article>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
       )}
     </Page>
-  );
-}
-
-function ReportCardsTab({
-  cards,
-  loading,
-  error,
-  onRetry,
-}: {
-  cards: Awaited<ReturnType<typeof listReportCards>>;
-  loading: boolean;
-  error?: string;
-  onRetry: () => void;
-}) {
-  if (loading) return <LoadingRows rows={3} height={120} />;
-  if (error) return <ErrorState message={error} onRetry={onRetry} />;
-  if (cards.length === 0)
-    return (
-      <EmptyState
-        icon={FileText}
-        title="No report cards yet"
-        description="Term 1, Term 2 and final report cards appear here as soon as they are published."
-      />
-    );
-
-  return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {cards.map((c) => {
-        const grade = c.overall_grade ?? gradeFor(c.percentage).letter;
-        return (
-          <SectionCard
-            key={c.id}
-            title={c.term}
-            description={c.published_on ? `Published ${fmtDate(c.published_on)}` : "Awaiting publication"}
-            actions={<StatusPill status={c.file_url ? "submitted" : "pending"}>{grade}</StatusPill>}
-          >
-            <div className="text-3xl font-semibold tracking-tight">
-              {c.percentage != null ? `${c.percentage}%` : "—"}
-            </div>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {c.file_url ? (
-                <>
-                  <a href={c.file_url} target="_blank" rel="noreferrer">
-                    <GhostButton as="span">
-                      <FileText className="h-4 w-4" /> View
-                    </GhostButton>
-                  </a>
-                  <a href={c.file_url} download target="_blank" rel="noreferrer">
-                    <GhostButton as="span">
-                      <Download className="h-4 w-4" /> Download
-                    </GhostButton>
-                  </a>
-                  <GhostButton onClick={() => window.open(c.file_url!, "_blank")?.print()}>
-                    <Printer className="h-4 w-4" /> Print
-                  </GhostButton>
-                </>
-              ) : (
-                <span className="text-xs text-[color:var(--ink-soft)]">File not uploaded yet.</span>
-              )}
-            </div>
-          </SectionCard>
-        );
-      })}
-    </div>
   );
 }
